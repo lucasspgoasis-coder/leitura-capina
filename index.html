@@ -4,470 +4,404 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Acompanhamento de Capina - SPG Oásis</title>
-    <!-- Bibliotecas de Design e Funcionalidade -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #f1f5f9; color: #1e293b; }
+        .header-bg { background: linear-gradient(135deg, #065f46 0%, #054a3a 100%); }
+        .card-base { border-radius: 2rem; background: white; border: 1px solid #e2e8f0; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.04); }
         
-        body { 
-            font-family: 'Inter', sans-serif; 
-            background-color: #f1f5f9; 
-            color: #1e293b; 
+        #successModal {
+            display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(15px); z-index: 10000; align-items: center; justify-content: center; padding: 20px;
         }
 
-        .header-bg { 
-            background: linear-gradient(135deg, #065f46 0%, #054a3a 100%); 
-        }
-
-        .card-base { 
-            border-radius: 2rem; 
-            background: white; 
-            border: 1px solid #e2e8f0; 
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.04); 
-        }
-
-        /* Modal de Checklist Estilizado */
-        #checklistModal {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(15, 23, 42, 0.8);
-            backdrop-filter: blur(12px);
-            z-index: 10000;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-
-        .check-card {
-            background: #f8fafc;
-            padding: 16px;
-            border-radius: 1.2rem;
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            border: 1px solid #e2e8f0;
-            margin-bottom: 10px;
-        }
-
-        .check-circle {
-            width: 28px;
-            height: 28px;
-            background: #10b981;
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-            font-size: 12px;
-        }
-
-        /* Cartão de Registro */
         .record-card {
-            background: white;
-            border-radius: 2.5rem;
-            padding: 2rem;
-            position: relative;
-            border: 1px solid #e2e8f0;
-        }
-
-        .tag-period {
-            background: #f0fdf4;
-            border: 1px solid #dcfce7;
-            padding: 12px;
-            border-radius: 1rem;
-            text-align: center;
-            flex: 1;
-        }
-
-        .tag-period.tarde {
-            background: #fffbeb;
-            border: 1px solid #fef3c7;
+            background: white; border-radius: 2rem; padding: 1.5rem; border: 1px solid #e2e8f0;
+            transition: all 0.3s ease; position: relative; overflow: hidden;
         }
 
         #loadingOverlay {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(255, 255, 255, 0.9);
-            z-index: 11000;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
+            display: none; position: fixed; inset: 0; background: rgba(255, 255, 255, 0.9);
+            z-index: 11000; flex-direction: column; align-items: center; justify-content: center;
         }
 
         input, select {
-            background: #f8fafc !important;
-            border: 2px solid #e2e8f0 !important;
-            border-radius: 1rem !important;
-            padding: 1rem !important;
-            font-weight: 700 !important;
+            background: #f8fafc !important; border: 2px solid #e2e8f0 !important;
+            border-radius: 1rem !important; padding: 0.75rem !important; font-weight: 700 !important; width: 100%;
         }
 
-        input:focus { border-color: #10b981 !important; outline: none; }
+        .section-label {
+            font-size: 10px; font-weight: 900; color: #64748b; text-transform: uppercase;
+            letter-spacing: 1px; display: flex; align-items: center; gap: 8px; margin-bottom: 12px;
+        }
+        .section-label::after { content: ""; flex: 1; height: 1px; background: #e2e8f0; }
 
-        .logo-historico {
-            width: 60px;
-            height: 60px;
-            object-fit: contain;
-            border-radius: 12px;
-            background: #f8fafc;
-            padding: 5px;
-            border: 1px solid #f1f5f9;
+        .hidden-field { display: none; }
+        .logo-small { height: 30px; width: auto; object-fit: contain; filter: grayscale(1) opacity(0.2); }
+        
+        .time-badge {
+            font-size: 10px; font-weight: 800; padding: 2px 8px; border-radius: 6px; text-transform: uppercase;
+        }
+
+        .btn-action {
+            width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;
+            border-radius: 10px; transition: all 0.2s;
         }
     </style>
 </head>
 <body class="min-h-screen pb-24">
 
-    <!-- Feedback de Carregamento -->
     <div id="loadingOverlay">
         <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-emerald-600 mb-4"></div>
-        <p class="font-black uppercase tracking-tighter text-slate-800">Sincronizando Planilha...</p>
+        <p class="font-black uppercase tracking-tighter text-slate-800 text-center px-4">Gravando na Planilha...</p>
     </div>
 
-    <!-- Modal Checklist -->
-    <div id="checklistModal">
-        <div class="bg-white w-full max-w-lg rounded-[3rem] p-8 shadow-2xl">
-            <div class="text-center mb-6">
-                <h3 class="text-3xl font-black text-slate-800 uppercase tracking-tight">CHECKLIST FINAL</h3>
-                <p class="text-slate-500 font-bold mt-2 px-4 text-sm">As informações abaixo estão corretas?</p>
+    <!-- Modal: Sucesso -->
+    <div id="successModal">
+        <div class="bg-white w-full max-w-sm rounded-[3rem] p-10 shadow-2xl text-center">
+            <div class="w-20 h-20 bg-emerald-500 text-white rounded-full flex items-center justify-center mx-auto mb-6 text-4xl shadow-lg shadow-emerald-200">
+                <i class="fas fa-check"></i>
             </div>
-
-            <div class="space-y-3 mb-8">
-                <div class="check-card">
-                    <div class="check-circle"><i class="fas fa-check"></i></div>
-                    <div>
-                        <p class="font-black text-slate-800 uppercase text-xs">DADOS DA EQUIPE</p>
-                        <p class="text-slate-500 text-[10px] font-bold uppercase">Operador e Equipamento conferidos</p>
-                    </div>
-                </div>
-                <div class="check-card">
-                    <div class="check-circle"><i class="fas fa-check"></i></div>
-                    <div>
-                        <p class="font-black text-slate-800 uppercase text-xs">HORÁRIOS DE TRABALHO</p>
-                        <p class="text-slate-500 text-[10px] font-bold uppercase">Início e Fim sem erros de digitação</p>
-                    </div>
-                </div>
-                <div class="check-card">
-                    <div class="check-circle"><i class="fas fa-check"></i></div>
-                    <div>
-                        <p class="font-black text-slate-800 uppercase text-xs">LOCALIZAÇÃO</p>
-                        <p class="text-slate-500 text-[10px] font-bold uppercase">Blocos e áreas de capina corretos</p>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="flex flex-col gap-3">
-                <button onclick="confirmarEnvio()" class="w-full bg-emerald-600 text-white font-black py-5 rounded-2xl shadow-xl uppercase tracking-widest text-xs hover:bg-emerald-700 transition-all">
-                    Está tudo ok! Enviar
-                </button>
-                <button onclick="esconderChecklist()" class="w-full bg-slate-100 text-slate-500 font-black py-4 rounded-2xl uppercase tracking-widest text-[10px] hover:bg-slate-200 transition-all">
-                    Não, quero corrigir
-                </button>
-            </div>
+            <h3 class="text-2xl font-black text-slate-800 uppercase tracking-tighter mb-2">Registrado!</h3>
+            <p class="text-slate-500 font-bold text-xs uppercase tracking-widest leading-relaxed">
+                Bloco salvo na planilha.<br>Pronto para o próximo.
+            </p>
         </div>
     </div>
 
-    <!-- Header -->
     <header class="header-bg text-white shadow-2xl mb-8">
-        <div class="max-w-7xl mx-auto px-8 py-6 flex justify-between items-center">
-            <div class="flex items-center gap-8">
-                <img src="https://imgur.com/wEozr34.png" alt="SPG Oásis" class="h-24 w-auto object-contain" onerror="this.src='https://via.placeholder.com/200?text=SPG'">
+        <div class="max-w-7xl mx-auto px-6 py-6 flex justify-between items-center">
+            <div class="flex items-center gap-6">
+                <img src="https://imgur.com/wEozr34.png" alt="SPG Oásis" class="h-20 w-auto object-contain">
                 <div>
-                    <h1 class="text-2xl font-black uppercase tracking-tighter leading-tight">SPG Oásis</h1>
-                    <p class="text-emerald-200 font-bold text-[10px] uppercase tracking-widest">Controle de Registro De capina</p>
+                    <h1 class="text-xl font-black uppercase tracking-tighter leading-tight">SPG Oásis</h1>
+                    <p class="text-emerald-200 font-bold text-[9px] uppercase tracking-widest">Controle de Horas de Capina</p>
                 </div>
             </div>
         </div>
     </header>
 
-    <main class="max-w-7xl mx-auto px-8">
+    <main class="max-w-7xl mx-auto px-6">
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
-            
-            <!-- Formulário -->
-            <div class="lg:col-span-4">
-                <div class="card-base p-8 sticky top-8 border-t-4 border-emerald-600">
+            <!-- Form -->
+            <div class="lg:col-span-5">
+                <div class="card-base p-8 sticky top-8 border-t-8 border-t-emerald-600">
                     <h2 class="text-lg font-black text-slate-800 uppercase mb-6 flex items-center gap-3">
-                        <i class="fas fa-pen-nib text-emerald-600"></i> Registro de Atividade
+                        <i class="fas fa-plus-circle text-emerald-600"></i> <span id="formTitle">Registrar Bloco</span>
                     </h2>
                     
-                    <form id="capinaForm" class="space-y-4">
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-[10px] font-black text-slate-400 uppercase mb-1 ml-1">Data</label>
-                                <input type="date" id="data" required class="w-full text-sm">
+                    <form id="capinaForm" class="space-y-6">
+                        <input type="hidden" id="editIndex" value="-1">
+                        
+                        <div class="space-y-4">
+                            <div class="section-label">Dados Fixos</div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-[10px] font-black text-slate-400 uppercase mb-1 ml-1">Data</label>
+                                    <input type="date" id="data" required>
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-black text-slate-400 uppercase mb-1 ml-1">Operador</label>
+                                    <select id="operador" onchange="toggleOutroOperador(this.value)">
+                                        <option value="EDUARDO">EDUARDO</option>
+                                        <option value="MESSIAS">MESSIAS</option>
+                                        <option value="OUTRO">OUTRO...</option>
+                                    </select>
+                                </div>
                             </div>
+                            <div id="divOutroOperador" class="hidden-field">
+                                <input type="text" id="outroOperador" placeholder="Nome do Operador">
+                            </div>
+
                             <div>
-                                <label class="block text-[10px] font-black text-slate-400 uppercase mb-1 ml-1">Período</label>
-                                <select id="periodo" class="w-full text-sm">
-                                    <option value="MANHÃ">MANHÃ</option>
-                                    <option value="TARDE">TARDE</option>
+                                <label class="block text-[10px] font-black text-slate-400 uppercase mb-1 ml-1">Equipamento</label>
+                                <select id="equip" onchange="toggleOutroEquip(this.value)">
+                                    <option value="Enxada">Enxada</option>
+                                    <option value="Roçadeira">Roçadeira</option>
+                                    <option value="Manual">Manual</option>
+                                    <option value="OUTRO">OUTRO...</option>
                                 </select>
                             </div>
-                        </div>
-
-                        <div>
-                            <label class="block text-[10px] font-black text-slate-400 uppercase mb-1 ml-1">Operador</label>
-                            <select id="operador" class="w-full text-sm">
-                                <option value="EDUARDO">EDUARDO</option>
-                                <option value="MESSIAS">MESSIAS</option>
-                            </select>
-                        </div>
-
-                        <div>
-                            <label class="block text-[10px] font-black text-slate-400 uppercase mb-1 ml-1">Bloco / Área</label>
-                            <select id="bloco" class="w-full text-sm">
-                                <option value="BLOCO A">BLOCO A</option>
-                                <option value="BLOCO B">BLOCO B</option>
-                                <option value="BLOCO C">BLOCO C</option>
-                                <option value="ÁREA GERAL">ÁREA GERAL</option>
-                            </select>
-                        </div>
-
-                        <div>
-                            <label class="block text-[10px] font-black text-slate-400 uppercase mb-1 ml-1">Equipamento</label>
-                            <select id="equip" class="w-full text-sm" onchange="toggleOutroEquip(this.value)">
-                                <option value="Enxada">Enxada</option>
-                                <option value="Roçadeira">Roçadeira</option>
-                                <option value="Manual">Manual</option>
-                                <option value="OUTROS">OUTROS...</option>
-                            </select>
-                            <input type="text" id="outroEquip" placeholder="Qual equipamento?" class="w-full mt-2 hidden text-sm">
-                        </div>
-
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-[10px] font-black text-slate-400 uppercase mb-1 ml-1">Entrada</label>
-                                <input type="time" id="horaInicio" required class="w-full text-sm">
+                            <div id="divOutroEquip" class="hidden-field">
+                                <input type="text" id="outroEquip" placeholder="Qual Equipamento?">
                             </div>
+
+                            <div class="section-label">Dados do Bloco Atual</div>
                             <div>
-                                <label class="block text-[10px] font-black text-slate-400 uppercase mb-1 ml-1">Saída</label>
-                                <input type="time" id="horaFim" required class="w-full text-sm">
+                                <label class="block text-[10px] font-black text-slate-400 uppercase mb-1 ml-1">Local (Bloco)</label>
+                                <div class="flex gap-2">
+                                    <select id="blocoSelect" class="flex-1" onchange="checkOutroBloco(this.value)">
+                                        <option value="BLOCO 01">Bloco 01</option>
+                                        <option value="BLOCO 02">Bloco 02</option>
+                                        <option value="BLOCO 03">Bloco 03</option>
+                                        <option value="ÁREA GERAL">Área Geral</option>
+                                        <option value="OUTROS">Outros...</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div id="divOutroBloco" class="hidden-field">
+                                <input type="text" id="outroBlocoInput" placeholder="Especifique o Local...">
                             </div>
                         </div>
 
-                        <button type="button" onclick="prepararEnvio()" class="w-full bg-emerald-600 text-white font-black py-5 rounded-2xl shadow-xl shadow-emerald-100 uppercase tracking-widest text-[11px] hover:bg-emerald-700 transition-all active:scale-95 mt-4">
-                            Registar Atividade
-                        </button>
+                        <div class="space-y-4">
+                            <div class="section-label">Horários do Bloco</div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <p class="text-[9px] font-black text-slate-400 uppercase mb-2">Manhã (Início/Fim)</p>
+                                    <div class="grid grid-cols-2 gap-1">
+                                        <input type="time" id="manhaInicio">
+                                        <input type="time" id="manhaFim">
+                                    </div>
+                                </div>
+                                <div>
+                                    <p class="text-[9px] font-black text-slate-400 uppercase mb-2">Tarde (Início/Fim)</p>
+                                    <div class="grid grid-cols-2 gap-1">
+                                        <input type="time" id="tardeInicio">
+                                        <input type="time" id="tardeFim">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex flex-col gap-3">
+                            <button type="button" onclick="salvarBlocoEContinuar()" class="w-full bg-emerald-600 text-white font-black py-4 rounded-2xl shadow-lg uppercase tracking-widest text-[12px] hover:bg-emerald-700 transition-all active:scale-95 flex items-center justify-center gap-3">
+                                <i class="fas fa-plus"></i> Salvar este Bloco
+                            </button>
+                            <button type="button" id="btnCancelEdit" onclick="cancelarEdicao()" class="hidden w-full bg-slate-100 text-slate-400 font-black py-3 rounded-2xl uppercase tracking-widest text-[10px]">
+                                Cancelar Edição
+                            </button>
+                        </div>
+
+                        <p class="text-[9px] text-slate-400 text-center font-bold uppercase tracking-wider">
+                            Os dados são enviados individualmente para a planilha.
+                        </p>
                     </form>
                 </div>
             </div>
 
-            <!-- Listagem -->
-            <div class="lg:col-span-8">
-                <div class="flex justify-between items-center mb-8">
-                    <h2 class="text-2xl font-black text-slate-800 uppercase tracking-tighter">Histórico Diário</h2>
-                    <button onclick="gerarImagemResumo()" class="bg-white px-6 py-3 rounded-2xl font-black text-[10px] uppercase tracking-widest text-slate-500 border border-slate-200 shadow-sm hover:bg-slate-50 transition-all">
-                        <i class="fas fa-camera mr-2 text-emerald-600"></i> Baixar Foto Resumo
+            <!-- List -->
+            <div class="lg:col-span-7">
+                <div class="flex justify-between items-end mb-8">
+                    <div>
+                        <h2 class="text-2xl font-black text-slate-800 uppercase tracking-tighter">Histórico</h2>
+                        <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Registros de hoje</p>
+                    </div>
+                    <button onclick="limparHistorico()" class="text-[9px] font-black uppercase text-slate-400 hover:text-red-500 flex items-center gap-2">
+                        <i class="fas fa-trash-can"></i> Limpar Histórico
                     </button>
                 </div>
-
-                <div id="listaRegistros" class="space-y-6"></div>
+                <div id="listaRegistros" class="space-y-4"></div>
             </div>
         </div>
     </main>
 
-    <!-- Exportação Oculta -->
-    <div id="exportArea" style="position: absolute; left: -9999px; top: 0; width: 800px; background: white; padding: 50px;">
-        <div style="border-left: 15px solid #065f46; padding-left: 25px; margin-bottom: 40px; display: flex; justify-content: space-between; align-items: center;">
-            <div>
-                <h1 style="font-size: 42px; font-weight: 900; color: #1e293b; text-transform: uppercase; margin: 0;">SPG Oásis</h1>
-                <p style="font-size: 20px; color: #64748b; font-weight: 800; text-transform: uppercase;">Controle de Registro De capina</p>
-            </div>
-            <img src="https://imgur.com/wEozr34.png" style="height: 120px; width: auto; object-fit: contain;">
-        </div>
-        <div id="exportContent" style="display: flex; flex-direction: column; gap: 25px;"></div>
-    </div>
-
     <script>
         const scriptURL = 'https://script.google.com/macros/s/AKfycbw_sE51ELNCNXH6s_ey3FcD79kqKBaocqVwUZtBjujuBhn6DT0x5h53Krhbs8WCKwZ5hg/exec';
+        let registros = JSON.parse(localStorage.getItem('oasis_v13')) || [];
 
-        let registros = JSON.parse(localStorage.getItem('oasis_v6_spg')) || [];
-        let dadosTemporarios = null;
-
-        function toggleOutroEquip(val) {
-            const outroInput = document.getElementById('outroEquip');
-            if(val === 'OUTROS') {
-                outroInput.classList.remove('hidden');
-                outroInput.required = true;
-            } else {
-                outroInput.classList.add('hidden');
-                outroInput.required = false;
-            }
+        function checkOutroBloco(val) {
+            document.getElementById('divOutroBloco').style.display = (val === 'OUTROS') ? 'block' : 'none';
         }
 
-        function prepararEnvio() {
+        function toggleOutroEquip(v) { document.getElementById('divOutroEquip').style.display = v==='OUTRO'?'block':'none'; }
+        function toggleOutroOperador(v) { document.getElementById('divOutroOperador').style.display = v==='OUTRO'?'block':'none'; }
+        
+        function formatarTempo(min) {
+            const h = Math.floor(min/60); const m = min%60;
+            return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
+        }
+
+        function calcularMinutos(i, f) {
+            if(!i || !f) return 0;
+            const [h1, m1] = i.split(':').map(Number);
+            const [h2, m2] = f.split(':').map(Number);
+            let d = (h2*60+m2) - (h1*60+m1);
+            return d > 0 ? d : 0;
+        }
+
+        async function salvarBlocoEContinuar() {
             const form = document.getElementById('capinaForm');
-            if(!form.checkValidity()) {
-                form.reportValidity();
-                return;
-            }
+            if(!form.checkValidity()) { form.reportValidity(); return; }
 
-            const hI = document.getElementById('horaInicio').value;
-            const hF = document.getElementById('horaFim').value;
-            const [h1, m1] = hI.split(':').map(Number);
-            const [h2, m2] = hF.split(':').map(Number);
-            let minTotal = (h2 * 60 + m2) - (h1 * 60 + m1);
-            if(minTotal < 0) minTotal += 1440;
+            const editIndex = parseInt(document.getElementById('editIndex').value);
+            const mI = document.getElementById('manhaInicio').value;
+            const mF = document.getElementById('manhaFim').value;
+            const tI = document.getElementById('tardeInicio').value;
+            const tF = document.getElementById('tardeFim').value;
+            
+            const minM = calcularMinutos(mI, mF);
+            const minT = calcularMinutos(tI, tF);
+            
+            if(minM + minT === 0) { alert("Preencha ao menos um turno."); return; }
 
-            let equipamentoFinal = document.getElementById('equip').value;
-            if(equipamentoFinal === 'OUTROS') {
-                equipamentoFinal = document.getElementById('outroEquip').value;
-            }
+            let op = document.getElementById('operador').value;
+            if(op === 'OUTRO') op = document.getElementById('outroOperador').value.toUpperCase() || 'NÃO IDENTIFICADO';
+            
+            let eq = document.getElementById('equip').value;
+            if(eq === 'OUTRO') eq = document.getElementById('outroEquip').value.toUpperCase() || 'NÃO IDENTIFICADO';
 
-            dadosTemporarios = {
-                timestamp: new Date().toISOString(),
-                data: document.getElementById('data').value.split('-').reverse().join('/'),
-                periodo: document.getElementById('periodo').value,
-                operador: document.getElementById('operador').value,
-                bloco: document.getElementById('bloco').value,
-                equip: equipamentoFinal,
-                horaInicio: hI,
-                horaFim: hF,
-                minutos: minTotal
+            let bl = document.getElementById('blocoSelect').value;
+            if(bl === 'OUTROS') bl = document.getElementById('outroBlocoInput').value.toUpperCase() || 'NÃO DEFINIDO';
+
+            // Payload com os nomes exatos da planilha
+            const payload = {
+                "Data": document.getElementById('data').value.split('-').reverse().join('/'),
+                "Operador": op,
+                "Bloco / Local": bl,
+                "Equipamento": eq,
+                "Turno Manhã": minM > 0 ? `${mI} - ${mF}` : 'N/A',
+                "Turno Tarde": minT > 0 ? `${tI} - ${tF}` : 'N/A',
+                "Minutos Manhã (Total)": minM,
+                "Minutos Tarde (Total)": minT,
+                // Dados para o histórico local
+                dataRaw: document.getElementById('data').value,
+                mI, mF, tI, tF,
+                totalMin: minM + minT
             };
 
-            mostrarChecklist();
-        }
-
-        async function confirmarEnvio() {
-            if(!dadosTemporarios) return;
-
-            esconderChecklist();
             document.getElementById('loadingOverlay').style.display = 'flex';
 
             try {
-                await fetch(scriptURL, {
-                    method: 'POST',
-                    body: JSON.stringify(dadosTemporarios),
-                    mode: 'no-cors'
-                });
+                // Envio para Planilha
+                await fetch(scriptURL, { method: 'POST', body: JSON.stringify(payload), mode: 'no-cors' });
 
-                registros.push(dadosTemporarios);
-                localStorage.setItem('oasis_v6_spg', JSON.stringify(registros));
-                
-                setTimeout(() => {
-                    document.getElementById('loadingOverlay').style.display = 'none';
-                    renderList();
-                    document.getElementById('capinaForm').reset();
-                    document.getElementById('outroEquip').classList.add('hidden');
-                    initDate();
-                    dadosTemporarios = null;
-                }, 1000);
+                if(editIndex > -1) {
+                    registros[editIndex] = payload;
+                } else {
+                    registros.unshift(payload);
+                }
 
-            } catch (error) {
-                alert('Erro ao sincronizar planilha. Tente novamente.');
+                localStorage.setItem('oasis_v13', JSON.stringify(registros));
                 document.getElementById('loadingOverlay').style.display = 'none';
+                mostrarSucessoEResetar();
+                renderList();
+            } catch (e) {
+                document.getElementById('loadingOverlay').style.display = 'none';
+                alert("Erro ao salvar.");
             }
         }
 
-        function mostrarChecklist() {
-            document.getElementById('checklistModal').style.display = 'flex';
+        function editarRegistro(index) {
+            const r = registros[index];
+            document.getElementById('editIndex').value = index;
+            document.getElementById('formTitle').innerText = "Editando Bloco";
+            document.getElementById('btnCancelEdit').classList.remove('hidden');
+            
+            document.getElementById('data').value = r.dataRaw;
+            
+            const opSelect = document.getElementById('operador');
+            if([...opSelect.options].some(o => o.value === r.Operador)) {
+                opSelect.value = r.Operador;
+                toggleOutroOperador(r.Operador);
+            } else {
+                opSelect.value = 'OUTRO';
+                toggleOutroOperador('OUTRO');
+                document.getElementById('outroOperador').value = r.Operador;
+            }
+
+            const eqSelect = document.getElementById('equip');
+            if([...eqSelect.options].some(o => o.value === r.Equipamento)) {
+                eqSelect.value = r.Equipamento;
+                toggleOutroEquip(r.Equipamento);
+            } else {
+                eqSelect.value = 'OUTRO';
+                toggleOutroEquip('OUTRO');
+                document.getElementById('outroEquip').value = r.Equipamento;
+            }
+
+            const blSelect = document.getElementById('blocoSelect');
+            if([...blSelect.options].some(o => o.value === r["Bloco / Local"])) {
+                blSelect.value = r["Bloco / Local"];
+                checkOutroBloco(r["Bloco / Local"]);
+            } else {
+                blSelect.value = 'OUTROS';
+                checkOutroBloco('OUTROS');
+                document.getElementById('outroBlocoInput').value = r["Bloco / Local"];
+            }
+
+            document.getElementById('manhaInicio').value = r.mI || '';
+            document.getElementById('manhaFim').value = r.mF || '';
+            document.getElementById('tardeInicio').value = r.tI || '';
+            document.getElementById('tardeFim').value = r.tF || '';
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        function esconderChecklist() {
-            document.getElementById('checklistModal').style.display = 'none';
+        function removerRegistro(index) {
+            if(confirm("Deseja remover este registro do histórico local?")) {
+                registros.splice(index, 1);
+                localStorage.setItem('oasis_v13', JSON.stringify(registros));
+                renderList();
+            }
         }
 
-        function formatarTempo(min) {
-            const h = Math.floor(min / 60);
-            const m = min % 60;
-            return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+        function limparHistorico() {
+            if(confirm("Isso apagará apenas a lista abaixo. Os dados salvos na planilha não serão afetados. Continuar?")) {
+                registros = [];
+                localStorage.setItem('oasis_v13', JSON.stringify(registros));
+                renderList();
+            }
+        }
+
+        function mostrarSucessoEResetar() {
+            document.getElementById('successModal').style.display = 'flex';
+            setTimeout(() => { document.getElementById('successModal').style.display = 'none'; }, 1500);
+            cancelarEdicao();
+        }
+
+        function cancelarEdicao() {
+            document.getElementById('editIndex').value = "-1";
+            document.getElementById('formTitle').innerText = "Registrar Bloco";
+            document.getElementById('btnCancelEdit').classList.add('hidden');
+            
+            // Limpa campos variáveis
+            document.getElementById('blocoSelect').selectedIndex = 0;
+            document.getElementById('outroBlocoInput').value = "";
+            document.getElementById('divOutroBloco').style.display = 'none';
+            document.getElementById('manhaInicio').value = "";
+            document.getElementById('manhaFim').value = "";
+            document.getElementById('tardeInicio').value = "";
+            document.getElementById('tardeFim').value = "";
         }
 
         function renderList() {
-            const container = document.getElementById('listaRegistros');
-            if (registros.length === 0) {
-                container.innerHTML = `<div class="text-center py-24 text-slate-300 font-black uppercase text-xs tracking-[0.2em]">Sem atividades registadas</div>`;
-                return;
-            }
-
-            container.innerHTML = registros.map((r, i) => {
-                const isManha = r.periodo === 'MANHÃ';
-                return `
-                <div class="record-card shadow-sm mb-6 border-l-8 border-emerald-600">
-                    <div class="flex justify-between items-start mb-6">
-                        <div class="flex items-center gap-4">
-                            <!-- Logo no Histórico -->
-                            <img src="https://imgur.com/wEozr34.png" alt="Logo" class="logo-historico" onerror="this.src='https://via.placeholder.com/60?text=SPG'">
-                            <div>
-                                <div class="flex items-center gap-2">
-                                    <span class="text-[9px] font-black px-2 py-0.5 rounded bg-emerald-100 text-emerald-700 uppercase tracking-widest">${r.periodo}</span>
-                                    <p class="text-[11px] font-bold text-slate-400">${r.data}</p>
-                                </div>
-                                <h3 class="text-2xl font-black text-slate-800 tracking-tight uppercase mt-1">${r.operador}</h3>
-                                <div class="flex items-center gap-2 mt-1">
-                                    <i class="fas fa-map-marker-alt text-[9px] text-emerald-500"></i>
-                                    <p class="text-[10px] font-bold text-slate-500 uppercase">${r.bloco} • ${r.equip}</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="text-right">
-                            <p class="text-4xl font-black text-emerald-900 tracking-tighter leading-none">${formatarTempo(r.minutos)}<span class="text-lg ml-1">h</span></p>
-                            <p class="text-[10px] font-black text-slate-400 uppercase mt-2 tracking-tighter">${r.horaInicio} ➔ ${r.horaFim}</p>
-                        </div>
-                    </div>
-                    
-                    <div class="flex gap-4">
-                        <div class="tag-period ${isManha ? 'bg-emerald-50 border-emerald-100' : 'opacity-20 bg-slate-50 border-slate-100'}">
-                            <p class="text-[8px] font-black text-emerald-800 uppercase tracking-widest mb-1">MANHÃ</p>
-                            <p class="text-lg font-black text-emerald-900">${isManha ? r.horaInicio + ' - ' + r.horaFim : '--:--'}</p>
-                        </div>
-                        <div class="tag-period tarde ${!isManha ? 'bg-amber-50 border-amber-100' : 'opacity-20 bg-slate-50 border-slate-100'}">
-                            <p class="text-[8px] font-black text-amber-800 uppercase tracking-widest mb-1">TARDE</p>
-                            <p class="text-lg font-black text-amber-900">${!isManha ? r.horaInicio + ' - ' + r.horaFim : '--:--'}</p>
-                        </div>
-                    </div>
-                </div>
-                `;
-            }).reverse().join('');
-        }
-
-        async function gerarImagemResumo() {
-            if(registros.length === 0) return;
-            document.getElementById('loadingOverlay').style.display = 'flex';
+            const list = document.getElementById('listaRegistros');
+            if(registros.length === 0) { list.innerHTML = `<div class="py-20 text-center"><p class="text-slate-300 font-black uppercase text-[10px]">Sem registros locais</p></div>`; return; }
             
-            const exportContent = document.getElementById('exportContent');
-            exportContent.innerHTML = registros.map(r => `
-                <div style="background: #f8fafc; padding: 30px; border-radius: 25px; border: 2px solid #e2e8f0;">
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <div style="display: flex; align-items: center; gap: 20px;">
-                            <img src="https://imgur.com/wEozr34.png" style="width: 50px; height: 50px; object-fit: contain;">
-                            <div>
-                                <h4 style="font-size: 26px; font-weight: 900; color: #0f172a; margin: 0; text-transform: uppercase;">${r.operador}</h4>
-                                <p style="font-size: 14px; font-weight: 700; color: #64748b; text-transform: uppercase; margin-top: 5px;">${r.bloco} | ${r.equip} | ${r.periodo}</p>
-                                <p style="font-size: 12px; font-weight: 800; color: #94a3b8; margin-top: 4px;">Horário: ${r.horaInicio} às ${r.horaFim}</p>
-                            </div>
+            list.innerHTML = registros.map((r, i) => `
+                <div class="record-card shadow-sm border-l-8 border-emerald-600">
+                    <img src="https://imgur.com/wEozr34.png" class="logo-small absolute right-6 top-6">
+                    <div class="flex justify-between items-start pr-12">
+                        <div>
+                            <span class="text-[9px] font-black bg-emerald-50 text-emerald-600 px-2 py-1 rounded">${r.Data}</span>
+                            <h3 class="text-xl font-black text-slate-800 uppercase mt-1 leading-none">${r["Bloco / Local"]}</h3>
+                            <p class="text-[10px] font-bold text-slate-400 uppercase mt-1 leading-tight">${r.Operador} | ${r.Equipamento}</p>
                         </div>
-                        <div style="text-align: right;">
-                            <span style="font-size: 32px; font-weight: 900; color: #059669;">${formatarTempo(r.minutos)}h</span>
+                        <div class="flex gap-1 absolute right-6 bottom-6">
+                            <button onclick="editarRegistro(${i})" class="btn-action bg-slate-50 text-slate-400 hover:bg-emerald-50 hover:text-emerald-600"><i class="fas fa-edit text-xs"></i></button>
+                            <button onclick="removerRegistro(${i})" class="btn-action bg-slate-50 text-slate-400 hover:bg-red-50 hover:text-red-600"><i class="fas fa-trash text-xs"></i></button>
                         </div>
+                    </div>
+                    <div class="mt-4 pt-4 border-t border-slate-100 flex justify-between items-end">
+                        <div class="flex gap-4">
+                            <div><p class="text-[8px] font-black text-slate-400 uppercase">Manhã</p><span class="time-badge bg-slate-100 text-slate-600">${formatarTempo(r["Minutos Manhã (Total)"])}h</span></div>
+                            <div><p class="text-[8px] font-black text-slate-400 uppercase">Tarde</p><span class="time-badge bg-slate-100 text-slate-600">${formatarTempo(r["Minutos Tarde (Total)"])}h</span></div>
+                        </div>
+                        <div class="text-right"><p class="text-2xl font-black text-emerald-700 tracking-tighter leading-none">${formatarTempo(r.totalMin)}h</p></div>
                     </div>
                 </div>
             `).join('');
-
-            try {
-                const canvas = await html2canvas(document.getElementById('exportArea'), { scale: 2 });
-                const link = document.createElement('a');
-                link.download = `Relatorio_SPG_Oasis_${new Date().toLocaleDateString().replace(/\//g,'-')}.jpg`;
-                link.href = canvas.toDataURL('image/jpeg', 0.9);
-                link.click();
-            } catch (e) {
-                console.error(e);
-            } finally {
-                document.getElementById('loadingOverlay').style.display = 'none';
-            }
         }
 
-        function initDate() {
+        window.onload = () => { 
             document.getElementById('data').value = new Date().toISOString().split('T')[0];
-        }
-
-        window.onload = () => { initDate(); renderList(); };
+            renderList(); 
+        };
     </script>
 </body>
 </html>
