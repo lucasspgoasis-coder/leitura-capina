@@ -10,122 +10,90 @@
     
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #f1f5f9; color: #1e293b; }
+        .header-bg { background: linear-gradient(135deg, #065f46 0%, #054a3a 100%); }
+        .card-base { border-radius: 2rem; background: white; border: 1px solid #e2e8f0; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.04); }
         
-        body { 
-            font-family: 'Inter', sans-serif; 
-            background-color: #f1f5f9; 
-            color: #1e293b; 
-        }
-
-        .header-bg { 
-            background: linear-gradient(135deg, #065f46 0%, #054a3a 100%); 
-        }
-
-        .card-base { 
-            border-radius: 2rem; 
-            background: white; 
-            border: 1px solid #e2e8f0; 
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.04); 
-        }
-
         #checklistModal {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(15, 23, 42, 0.8);
-            backdrop-filter: blur(12px);
-            z-index: 10000;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
-
-        .check-card {
-            background: #f8fafc;
-            padding: 16px;
-            border-radius: 1.2rem;
-            display: flex;
-            align-items: center;
-            gap: 16px;
-            border: 1px solid #e2e8f0;
-            margin-bottom: 10px;
-        }
-
-        .check-circle {
-            width: 28px;
-            height: 28px;
-            background: #10b981;
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-            font-size: 12px;
+            display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(15px); z-index: 10000; align-items: center; justify-content: center; padding: 20px;
         }
 
         .record-card {
-            background: white;
-            border-radius: 2rem;
-            padding: 1.5rem;
-            position: relative;
-            border: 1px solid #e2e8f0;
-            transition: all 0.3s ease;
+            background: white; border-radius: 2rem; padding: 1.5rem; border: 1px solid #e2e8f0;
+            transition: all 0.3s ease; position: relative;
         }
 
         #loadingOverlay {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(255, 255, 255, 0.9);
-            z-index: 11000;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
+            display: none; position: fixed; inset: 0; background: rgba(255, 255, 255, 0.95);
+            z-index: 11000; flex-direction: column; align-items: center; justify-content: center;
         }
 
         input, select {
-            background: #f8fafc !important;
-            border: 2px solid #e2e8f0 !important;
-            border-radius: 1rem !important;
-            padding: 0.75rem !important;
-            font-weight: 700 !important;
-            width: 100%;
+            background: #f8fafc !important; border: 2px solid #e2e8f0 !important;
+            border-radius: 1rem !important; padding: 0.75rem !important; font-weight: 700 !important; width: 100%;
         }
 
-        input:focus { border-color: #10b981 !important; outline: none; }
-        
-        .btn-action {
-            width: 36px;
-            height: 36px;
+        .btn-mini {
+            padding: 8px 12px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
             display: flex;
             align-items: center;
-            justify-content: center;
-            border-radius: 10px;
+            gap: 6px;
             transition: all 0.2s;
+        }
+        
+        .section-label {
+            font-size: 10px;
+            font-weight: 900;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .section-label::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background: #e2e8f0;
         }
     </style>
 </head>
 <body class="min-h-screen pb-24">
 
+    <!-- Overlay de Carregamento -->
     <div id="loadingOverlay">
         <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-emerald-600 mb-4"></div>
-        <p class="font-black uppercase tracking-tighter text-slate-800">Sincronizando Planilha...</p>
+        <p class="font-black uppercase tracking-tighter text-slate-800">Processando Registro...</p>
     </div>
 
-    <!-- Modal Checklist -->
+    <!-- Modal de Confirmação -->
     <div id="checklistModal">
-        <div class="bg-white w-full max-w-lg rounded-[2.5rem] p-8 shadow-2xl">
+        <div class="bg-white w-full max-w-lg rounded-[2.5rem] p-8 shadow-2xl border-4 border-emerald-50">
             <div class="text-center mb-6">
-                <h3 class="text-2xl font-black text-slate-800 uppercase tracking-tight">CONFERIR DADOS</h3>
+                <div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4 text-2xl">
+                    <i class="fas fa-check-double"></i>
+                </div>
+                <h3 class="text-2xl font-black text-slate-800 uppercase tracking-tight">Validar Registro</h3>
+                <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Confirme os dados antes de gravar</p>
             </div>
-            <div class="space-y-3 mb-8" id="resumoChecklist"></div>
+            
+            <div id="resumoChecklist" class="space-y-4 mb-8"></div>
+            
             <div class="flex flex-col gap-3">
-                <button onclick="confirmarEnvio()" class="w-full bg-emerald-600 text-white font-black py-4 rounded-2xl shadow-xl uppercase tracking-widest text-xs hover:bg-emerald-700 transition-all">
-                    Confirmar e Gravar
+                <button onclick="confirmarEnvio()" class="w-full bg-emerald-600 text-white font-black py-4 rounded-2xl shadow-xl uppercase tracking-widest text-xs hover:bg-emerald-700 transition-all active:scale-95 flex items-center justify-center gap-2">
+                    <i class="fas fa-save"></i> Gravar na Planilha
                 </button>
                 <button onclick="esconderChecklist()" class="w-full bg-slate-100 text-slate-500 font-black py-3 rounded-2xl uppercase tracking-widest text-[10px] hover:bg-slate-200 transition-all">
-                    Corrigir Informações
+                    Ajustar Horários
                 </button>
             </div>
         </div>
@@ -137,7 +105,7 @@
                 <img src="https://imgur.com/wEozr34.png" alt="SPG Oásis" class="h-20 w-auto object-contain">
                 <div>
                     <h1 class="text-xl font-black uppercase tracking-tighter leading-tight">SPG Oásis</h1>
-                    <p class="text-emerald-200 font-bold text-[9px] uppercase tracking-widest">Controle de Registro De capina</p>
+                    <p class="text-emerald-200 font-bold text-[9px] uppercase tracking-widest">Controle de Horas de Capina</p>
                 </div>
             </div>
         </div>
@@ -146,332 +114,332 @@
     <main class="max-w-7xl mx-auto px-6">
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
             <!-- Formulário -->
-            <div class="lg:col-span-4">
-                <div class="card-base p-8 sticky top-8">
+            <div class="lg:col-span-5">
+                <div class="card-base p-8 sticky top-8 border-t-8 border-t-emerald-600">
                     <h2 class="text-lg font-black text-slate-800 uppercase mb-6 flex items-center gap-3">
-                        <i class="fas fa-edit text-emerald-600"></i> <span id="formTitle">Novo Registro</span>
+                        <i class="fas fa-clock text-emerald-600"></i> <span id="formTitle">Registro Diário</span>
                     </h2>
-                    <form id="capinaForm" class="space-y-4">
-                        <input type="hidden" id="editId" value="">
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-[10px] font-black text-slate-400 uppercase mb-1 ml-1">Data</label>
-                                <input type="date" id="data" required>
+                    
+                    <form id="capinaForm" class="space-y-6">
+                        <input type="hidden" id="editIndex" value="-1">
+                        
+                        <div class="space-y-4">
+                            <div class="section-label">Dados Gerais</div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-[10px] font-black text-slate-400 uppercase mb-1 ml-1">Data</label>
+                                    <input type="date" id="data" required>
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-black text-slate-400 uppercase mb-1 ml-1">Operador</label>
+                                    <select id="operador">
+                                        <option value="EDUARDO">EDUARDO</option>
+                                        <option value="MESSIAS">MESSIAS</option>
+                                    </select>
+                                </div>
                             </div>
-                            <div>
-                                <label class="block text-[10px] font-black text-slate-400 uppercase mb-1 ml-1">Período</label>
-                                <select id="periodo">
-                                    <option value="MANHÃ">MANHÃ</option>
-                                    <option value="TARDE">TARDE</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div>
-                            <label class="block text-[10px] font-black text-slate-400 uppercase mb-1 ml-1">Operador</label>
-                            <select id="operador">
-                                <option value="EDUARDO">EDUARDO</option>
-                                <option value="MESSIAS">MESSIAS</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-[10px] font-black text-slate-400 uppercase mb-1 ml-1">Bloco / Área</label>
-                            <select id="bloco"></select>
-                        </div>
-                        <div>
-                            <label class="block text-[10px] font-black text-slate-400 uppercase mb-1 ml-1">Equipamento</label>
-                            <select id="equip" onchange="toggleOutroEquip(this.value)">
-                                <option value="Enxada">Enxada</option>
-                                <option value="Roçadeira">Roçadeira</option>
-                                <option value="Manual">Manual</option>
-                                <option value="OUTROS">OUTROS...</option>
-                            </select>
-                            <input type="text" id="outroEquip" placeholder="Qual equipamento?" class="mt-2 hidden">
-                        </div>
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-[10px] font-black text-slate-400 uppercase mb-1 ml-1">Entrada</label>
-                                <input type="time" id="horaInicio" required>
-                            </div>
-                            <div>
-                                <label class="block text-[10px] font-black text-slate-400 uppercase mb-1 ml-1">Saída</label>
-                                <input type="time" id="horaFim" required>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-[10px] font-black text-slate-400 uppercase mb-1 ml-1">Bloco</label>
+                                    <select id="bloco">
+                                        <option value="BLOCO A">BLOCO A</option>
+                                        <option value="BLOCO B">BLOCO B</option>
+                                        <option value="BLOCO C">BLOCO C</option>
+                                        <option value="BLOCO D">BLOCO D</option>
+                                        <option value="BLOCO E">BLOCO E</option>
+                                        <option value="ÁREA GERAL">ÁREA GERAL</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-black text-slate-400 uppercase mb-1 ml-1">Equipamento</label>
+                                    <select id="equip">
+                                        <option value="Enxada">Enxada</option>
+                                        <option value="Roçadeira">Roçadeira</option>
+                                        <option value="Manual">Manual</option>
+                                    </select>
+                                </div>
                             </div>
                         </div>
-                        <div class="flex gap-2">
+
+                        <div class="space-y-4">
+                            <div class="section-label">Período Manhã</div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-[10px] font-black text-slate-400 uppercase mb-1 ml-1">Entrada</label>
+                                    <input type="time" id="manhaInicio">
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-black text-slate-400 uppercase mb-1 ml-1">Saída</label>
+                                    <input type="time" id="manhaFim">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="space-y-4">
+                            <div class="section-label">Período Tarde</div>
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-[10px] font-black text-slate-400 uppercase mb-1 ml-1">Entrada</label>
+                                    <input type="time" id="tardeInicio">
+                                </div>
+                                <div>
+                                    <label class="block text-[10px] font-black text-slate-400 uppercase mb-1 ml-1">Saída</label>
+                                    <input type="time" id="tardeFim">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex gap-2 pt-4">
                             <button type="button" onclick="prepararEnvio()" class="flex-1 bg-emerald-600 text-white font-black py-4 rounded-2xl shadow-lg uppercase tracking-widest text-[11px] hover:bg-emerald-700 transition-all active:scale-95">
-                                Salvar Registro
+                                Validar Registro
                             </button>
-                            <button type="button" onclick="cancelarEdicao()" id="btnCancelEdit" class="hidden bg-slate-200 text-slate-600 px-4 rounded-2xl font-black uppercase text-[10px]">X</button>
+                            <button type="button" id="btnCancelEdit" onclick="cancelarEdicao()" class="hidden bg-slate-100 text-slate-400 px-4 rounded-2xl font-black text-xs hover:bg-slate-200">
+                                <i class="fas fa-times"></i>
+                            </button>
                         </div>
                     </form>
                 </div>
             </div>
 
             <!-- Histórico -->
-            <div class="lg:col-span-8">
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
-                    <h2 class="text-2xl font-black text-slate-800 uppercase tracking-tighter">Histórico</h2>
-                    <div class="flex gap-2 w-full sm:w-auto">
-                        <button onclick="limparTudo()" class="flex-1 sm:flex-none bg-red-50 text-red-600 px-4 py-3 rounded-2xl font-black text-[10px] uppercase tracking-widest border border-red-100">
-                            <i class="fas fa-trash-alt mr-2"></i> Limpar Tudo
-                        </button>
-                        <button onclick="gerarImagemResumo()" class="flex-1 sm:flex-none bg-white px-4 py-3 rounded-2xl font-black text-[10px] uppercase tracking-widest text-slate-500 border border-slate-200">
-                            <i class="fas fa-camera mr-2 text-emerald-600"></i> Foto Resumo
-                        </button>
-                    </div>
+            <div class="lg:col-span-7">
+                <div class="flex justify-between items-center mb-8">
+                    <h2 class="text-2xl font-black text-slate-800 uppercase tracking-tighter">Histórico Diário</h2>
+                    <button onclick="gerarImagemResumo()" class="bg-white px-4 py-3 rounded-2xl font-black text-[10px] uppercase tracking-widest text-slate-500 border border-slate-200 hover:shadow-md transition-all">
+                        <i class="fas fa-camera mr-2 text-emerald-600"></i> Foto Resumo
+                    </button>
                 </div>
                 <div id="listaRegistros" class="space-y-4"></div>
             </div>
         </div>
     </main>
 
+    <!-- Área de Exportação -->
     <div id="exportArea" style="position: absolute; left: -9999px; top: 0; width: 800px; background: white; padding: 50px;">
         <div style="border-left: 15px solid #065f46; padding-left: 25px; margin-bottom: 40px; display: flex; justify-content: space-between; align-items: center;">
             <div>
-                <h1 style="font-size: 42px; font-weight: 900; color: #1e293b; text-transform: uppercase; margin: 0;">SPG Oásis</h1>
-                <p style="font-size: 20px; color: #64748b; font-weight: 800; text-transform: uppercase;">Relatório Consolidado</p>
+                <h1 style="font-size: 38px; font-weight: 900; color: #1e293b; text-transform: uppercase; margin: 0;">SPG Oásis</h1>
+                <p style="font-size: 18px; color: #64748b; font-weight: 800; text-transform: uppercase;">Relatório Consolidado de Capina</p>
             </div>
-            <img src="https://imgur.com/wEozr34.png" style="height: 120px; width: auto;">
+            <img src="https://imgur.com/wEozr34.png" style="height: 100px; width: auto;">
         </div>
-        <div id="exportContent" style="display: flex; flex-direction: column; gap: 20px;"></div>
+        <div id="exportContent"></div>
     </div>
 
     <script>
         const scriptURL = 'https://script.google.com/macros/s/AKfycbw_sE51ELNCNXH6s_ey3FcD79kqKBaocqVwUZtBjujuBhn6DT0x5h53Krhbs8WCKwZ5hg/exec';
-        const blocosDisponiveis = ["ÁREA GERAL", "BLOCO A", "BLOCO B", "BLOCO C", "BLOCO D", "BLOCO E", "ESTACIONAMENTO", "JARDIM CENTRAL", "POMAR"].sort();
-
-        let registros = JSON.parse(localStorage.getItem('oasis_spg_v8')) || [];
+        let registros = JSON.parse(localStorage.getItem('oasis_consolidado_v1')) || [];
         let dadosTemporarios = null;
 
-        function popularBlocos() {
-            const select = document.getElementById('bloco');
-            select.innerHTML = blocosDisponiveis.map(b => `<option value="${b}">${b}</option>`).join('');
-        }
-
-        function toggleOutroEquip(val) {
-            const outroInput = document.getElementById('outroEquip');
-            outroInput.classList.toggle('hidden', val !== 'OUTROS');
-        }
-
-        function calcularMinutos(inicio, fim) {
-            const [h1, m1] = inicio.split(':').map(Number);
-            const [h2, m2] = fim.split(':').map(Number);
-            let total = (h2 * 60 + m2) - (h1 * 60 + m1);
-            return total < 0 ? total + 1440 : total;
-        }
-
         function formatarTempo(min) {
+            if (!min || min <= 0) return "00:00";
             const h = Math.floor(min / 60);
             const m = min % 60;
             return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
         }
 
-        // Função principal de Agrupamento
-        function obterRegistrosAgrupados() {
-            const grupos = {};
-            registros.forEach((r, index) => {
-                const chave = `${r.data}_${r.operador}_${r.bloco}_${r.equip}`;
-                if (!grupos[chave]) {
-                    grupos[chave] = {
-                        data: r.data,
-                        operador: r.operador,
-                        bloco: r.bloco,
-                        equip: r.equip,
-                        totalMinutos: 0,
-                        subRegistros: []
-                    };
-                }
-                grupos[chave].totalMinutos += r.minutos;
-                grupos[chave].subRegistros.push({ ...r, originalIndex: index });
-            });
-            return Object.values(grupos);
+        function calcularMinutos(inicio, fim) {
+            if(!inicio || !fim) return 0;
+            const [h1, m1] = inicio.split(':').map(Number);
+            const [h2, m2] = fim.split(':').map(Number);
+            let diff = (h2 * 60 + m2) - (h1 * 60 + m1);
+            return diff > 0 ? diff : 0;
         }
 
         function prepararEnvio() {
-            const form = document.getElementById('capinaForm');
-            if(!form.checkValidity()) return form.reportValidity();
-
-            const hI = document.getElementById('horaInicio').value;
-            const hF = document.getElementById('horaFim').value;
-            const minutos = calcularMinutos(hI, hF);
-            const periodo = document.getElementById('periodo').value;
+            const data = document.getElementById('data').value.split('-').reverse().join('/');
+            const operador = document.getElementById('operador').value;
+            const bloco = document.getElementById('bloco').value;
+            const equip = document.getElementById('equip').value;
             
-            let equip = document.getElementById('equip').value;
-            if(equip === 'OUTROS') equip = document.getElementById('outroEquip').value;
+            const mI = document.getElementById('manhaInicio').value;
+            const mF = document.getElementById('manhaFim').value;
+            const tI = document.getElementById('tardeInicio').value;
+            const tF = document.getElementById('tardeFim').value;
+
+            const minManha = calcularMinutos(mI, mF);
+            const minTarde = calcularMinutos(tI, tF);
+
+            if(minManha === 0 && minTarde === 0) {
+                alert("Preencha ao menos um horário de entrada e saída válido.");
+                return;
+            }
 
             dadosTemporarios = {
-                id: document.getElementById('editId').value || Date.now().toString(),
-                timestamp: new Date().toLocaleString('pt-BR'),
-                data: document.getElementById('data').value.split('-').reverse().join('/'),
-                periodo: periodo,
-                operador: document.getElementById('operador').value,
-                bloco: document.getElementById('bloco').value,
-                equip: equip,
-                horaInicio: hI,
-                horaFim: hF,
-                minutos: minutos,
-                manhaHorario: periodo === 'MANHÃ' ? `${hI} - ${hF}` : '',
-                manhaMinutos: periodo === 'MANHÃ' ? minutos : 0,
-                tardeHorario: periodo === 'TARDE' ? `${hI} - ${hF}` : '',
-                tardeMinutos: periodo === 'TARDE' ? minutos : 0
+                data, operador, bloco, equip,
+                manhaHorario: minManha > 0 ? `${mI} - ${mF}` : '',
+                manhaMinutos: minManha,
+                tardeHorario: minTarde > 0 ? `${tI} - ${tF}` : '',
+                tardeMinutos: minTarde
             };
 
-            const resumoHTML = `
-                <div class="check-card"><div><p class="text-[10px] font-black text-slate-400">OPERADOR</p><p class="text-sm font-bold">${dadosTemporarios.operador}</p></div></div>
-                <div class="check-card"><div><p class="text-[10px] font-black text-slate-400">LOCAL</p><p class="text-sm font-bold">${dadosTemporarios.bloco}</p></div></div>
-                <div class="check-card"><div><p class="text-[10px] font-black text-slate-400">TEMPO</p><p class="text-sm font-bold">${formatarTempo(minutos)}h (${periodo})</p></div></div>
+            const html = `
+                <div class="bg-slate-900 p-5 rounded-[1.5rem] text-white">
+                    <p class="text-[9px] font-black text-emerald-400 uppercase tracking-widest mb-1">Identificação</p>
+                    <p class="text-lg font-black uppercase leading-tight">${dadosTemporarios.operador}</p>
+                    <p class="text-[10px] font-bold text-slate-400 mt-1">${dadosTemporarios.bloco} | ${dadosTemporarios.equip}</p>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <div class="p-4 rounded-2xl border-2 ${minManha > 0 ? 'border-emerald-500 bg-emerald-50' : 'border-slate-100 bg-slate-50 opacity-40'}">
+                        <p class="text-[9px] font-black text-slate-400 uppercase mb-1">Manhã</p>
+                        <p class="text-sm font-black text-slate-800">${dadosTemporarios.manhaHorario || '--:--'}</p>
+                        <p class="text-[9px] font-bold text-emerald-600 mt-1">${formatarTempo(minManha)}h</p>
+                    </div>
+                    
+                    <div class="p-4 rounded-2xl border-2 ${minTarde > 0 ? 'border-emerald-500 bg-emerald-50' : 'border-slate-100 bg-slate-50 opacity-40'}">
+                        <p class="text-[9px] font-black text-slate-400 uppercase mb-1">Tarde</p>
+                        <p class="text-sm font-black text-slate-800">${dadosTemporarios.tardeHorario || '--:--'}</p>
+                        <p class="text-[9px] font-bold text-emerald-600 mt-1">${formatarTempo(minTarde)}h</p>
+                    </div>
+                </div>
+
+                <div class="bg-emerald-600 p-4 rounded-2xl text-center shadow-lg">
+                    <p class="text-[9px] font-black text-emerald-200 uppercase tracking-widest">Total Acumulado</p>
+                    <p class="text-3xl font-black text-white tracking-tighter">${formatarTempo(minManha + minTarde)}h</p>
+                </div>
             `;
-            document.getElementById('resumoChecklist').innerHTML = resumoHTML;
+            document.getElementById('resumoChecklist').innerHTML = html;
             document.getElementById('checklistModal').style.display = 'flex';
         }
 
         async function confirmarEnvio() {
-            if(!dadosTemporarios) return;
-            const editId = document.getElementById('editId').value;
             esconderChecklist();
             document.getElementById('loadingOverlay').style.display = 'flex';
 
             try {
-                fetch(scriptURL, { method: 'POST', body: JSON.stringify(dadosTemporarios), mode: 'no-cors' });
+                // Envia para o servidor (Google Sheets)
+                await fetch(scriptURL, { method: 'POST', body: JSON.stringify(dadosTemporarios), mode: 'no-cors' });
 
-                if(editId) {
-                    const idx = registros.findIndex(r => r.id === editId);
-                    if(idx > -1) registros[idx] = dadosTemporarios;
+                const editIdx = parseInt(document.getElementById('editIndex').value);
+                if (editIdx > -1) {
+                    registros[editIdx] = dadosTemporarios;
                 } else {
                     registros.push(dadosTemporarios);
                 }
+
+                localStorage.setItem('oasis_consolidado_v1', JSON.stringify(registros));
                 
-                localStorage.setItem('oasis_spg_v8', JSON.stringify(registros));
                 setTimeout(() => {
                     document.getElementById('loadingOverlay').style.display = 'none';
-                    renderList();
                     cancelarEdicao();
+                    renderList();
                 }, 800);
-            } catch (error) {
+            } catch (e) {
                 document.getElementById('loadingOverlay').style.display = 'none';
+                alert("Erro ao salvar dados.");
             }
-        }
-
-        function editarRegistro(originalIndex) {
-            const r = registros[originalIndex];
-            document.getElementById('editId').value = r.id;
-            document.getElementById('formTitle').innerText = "Editando Registro";
-            document.getElementById('btnCancelEdit').classList.remove('hidden');
-            
-            document.getElementById('data').value = r.data.split('/').reverse().join('-');
-            document.getElementById('periodo').value = r.periodo;
-            document.getElementById('operador').value = r.operador;
-            document.getElementById('bloco').value = r.bloco;
-            
-            const equipSelect = document.getElementById('equip');
-            if([...equipSelect.options].some(o => o.value === r.equip)) {
-                equipSelect.value = r.equip;
-                document.getElementById('outroEquip').classList.add('hidden');
-            } else {
-                equipSelect.value = 'OUTROS';
-                document.getElementById('outroEquip').value = r.equip;
-                document.getElementById('outroEquip').classList.remove('hidden');
-            }
-            document.getElementById('horaInicio').value = r.horaInicio;
-            document.getElementById('horaFim').value = r.horaFim;
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        function excluirRegistro(originalIndex) {
-            if(confirm("Excluir este turno?")) {
-                registros.splice(originalIndex, 1);
-                localStorage.setItem('oasis_spg_v8', JSON.stringify(registros));
-                renderList();
-            }
-        }
-
-        function cancelarEdicao() {
-            document.getElementById('capinaForm').reset();
-            document.getElementById('editId').value = "";
-            document.getElementById('formTitle').innerText = "Novo Registro";
-            document.getElementById('btnCancelEdit').classList.add('hidden');
-            document.getElementById('outroEquip').classList.add('hidden');
-            initDate();
         }
 
         function renderList() {
             const container = document.getElementById('listaRegistros');
-            const agrupados = obterRegistrosAgrupados();
-
-            if (agrupados.length === 0) {
-                container.innerHTML = `<div class="text-center py-20 text-slate-300 font-black uppercase text-xs tracking-widest">Nenhum histórico</div>`;
+            if (registros.length === 0) {
+                container.innerHTML = `<div class="text-center py-20 text-slate-300 font-black uppercase text-xs tracking-widest">Sem registros no momento</div>`;
                 return;
             }
 
-            container.innerHTML = agrupados.map(grupo => {
-                const totalManha = grupo.subRegistros.reduce((acc, curr) => acc + curr.manhaMinutos, 0);
-                const totalTarde = grupo.subRegistros.reduce((acc, curr) => acc + curr.tardeMinutos, 0);
-
+            container.innerHTML = registros.map((r, i) => {
+                const total = r.manhaMinutos + r.tardeMinutos;
                 return `
-                <div class="record-card shadow-sm border-l-4 border-l-emerald-500">
+                <div class="record-card shadow-sm border-l-8 border-l-emerald-600">
                     <div class="flex justify-between items-start mb-4">
-                        <div class="flex-1">
-                            <span class="text-[10px] font-bold text-slate-400 uppercase">${grupo.data}</span>
-                            <h3 class="text-xl font-black text-slate-800 uppercase tracking-tight">${grupo.operador}</h3>
-                            <p class="text-[10px] font-bold text-slate-500 uppercase mt-1">
-                                <i class="fas fa-map-marker-alt text-emerald-500 mr-1"></i> ${grupo.bloco} 
-                                <span class="mx-1 text-slate-300">•</span>
-                                <i class="fas fa-tools text-emerald-500 mr-1"></i> ${grupo.equip}
-                            </p>
+                        <div>
+                            <span class="text-[10px] font-bold text-emerald-600 uppercase tracking-widest bg-emerald-50 px-2 py-1 rounded-md">${r.data}</span>
+                            <h3 class="text-xl font-black text-slate-800 uppercase tracking-tight mt-2">${r.operador}</h3>
+                            <p class="text-[10px] font-bold text-slate-400 uppercase mt-0.5">${r.bloco} • ${r.equip}</p>
                         </div>
                         <div class="text-right">
-                            <p class="text-2xl font-black text-emerald-600 tracking-tighter">${formatarTempo(grupo.totalMinutos)}h</p>
-                            <p class="text-[9px] font-black text-slate-400 uppercase">TOTAL DIA</p>
+                            <p class="text-2xl font-black text-emerald-700 tracking-tighter">${formatarTempo(total)}h</p>
+                            <p class="text-[9px] font-black text-slate-400 uppercase">Total do Dia</p>
                         </div>
                     </div>
-                    
-                    <div class="space-y-2 border-t border-slate-50 pt-3">
-                        ${grupo.subRegistros.map(sub => `
-                            <div class="flex justify-between items-center bg-slate-50 p-2 rounded-xl">
-                                <div class="flex items-center gap-3">
-                                    <span class="px-2 py-0.5 bg-white text-[8px] font-black rounded border border-slate-200">${sub.periodo}</span>
-                                    <span class="text-xs font-bold text-slate-600">${sub.horaInicio} ➔ ${sub.horaFim}</span>
-                                </div>
-                                <div class="flex gap-1">
-                                    <button onclick="editarRegistro(${sub.originalIndex})" class="btn-action bg-white text-slate-400 hover:text-emerald-500"><i class="fas fa-pencil-alt text-[10px]"></i></button>
-                                    <button onclick="excluirRegistro(${sub.originalIndex})" class="btn-action bg-white text-slate-300 hover:text-red-500"><i class="fas fa-times text-[10px]"></i></button>
-                                </div>
-                            </div>
-                        `).join('')}
+
+                    <div class="grid grid-cols-2 gap-3 mt-4 border-t border-slate-100 pt-4">
+                        <div class="bg-slate-50 p-3 rounded-2xl border ${r.manhaMinutos > 0 ? 'border-emerald-200' : 'opacity-30'}">
+                            <p class="text-[8px] font-black text-slate-400 uppercase">Manhã: ${r.manhaHorario || '--'}</p>
+                            <p class="text-[10px] font-bold text-emerald-600">${formatarTempo(r.manhaMinutos)}h</p>
+                        </div>
+                        <div class="bg-slate-50 p-3 rounded-2xl border ${r.tardeMinutos > 0 ? 'border-amber-200' : 'opacity-30'}">
+                            <p class="text-[8px] font-black text-slate-400 uppercase">Tarde: ${r.tardeHorario || '--'}</p>
+                            <p class="text-[10px] font-bold text-amber-600">${formatarTempo(r.tardeMinutos)}h</p>
+                        </div>
                     </div>
 
-                    <div class="flex gap-4 mt-3 pt-3 border-t border-slate-50">
-                         <div class="flex-1 text-center">
-                            <p class="text-[8px] font-black text-slate-300 uppercase">Total Manhã</p>
-                            <p class="text-xs font-bold text-slate-600">${totalManha > 0 ? formatarTempo(totalManha) : '--:--'}</p>
-                         </div>
-                         <div class="flex-1 text-center border-l border-slate-100">
-                            <p class="text-[8px] font-black text-slate-300 uppercase">Total Tarde</p>
-                            <p class="text-xs font-bold text-slate-600">${totalTarde > 0 ? formatarTempo(totalTarde) : '--:--'}</p>
-                         </div>
+                    <div class="flex gap-2 mt-4 justify-end">
+                        <button onclick="editarRegistro(${i})" class="btn-mini bg-emerald-50 text-emerald-600 hover:bg-emerald-200">
+                            <i class="fas fa-edit"></i> Editar
+                        </button>
+                        <button onclick="excluir(${i})" class="btn-mini bg-red-50 text-red-500 hover:bg-red-200">
+                            <i class="fas fa-trash-alt"></i> Excluir
+                        </button>
                     </div>
                 </div>
-            `;}).reverse().join('');
+                `;
+            }).reverse().join('');
+        }
+
+        function editarRegistro(idx) {
+            const r = registros[idx];
+            document.getElementById('editIndex').value = idx;
+            document.getElementById('formTitle').innerText = "Editando Registro";
+            document.getElementById('btnCancelEdit').classList.remove('hidden');
+
+            document.getElementById('data').value = r.data.split('/').reverse().join('-');
+            document.getElementById('operador').value = r.operador;
+            document.getElementById('bloco').value = r.bloco;
+            document.getElementById('equip').value = r.equip;
+            
+            if(r.manhaHorario) {
+                const times = r.manhaHorario.split(' - ');
+                document.getElementById('manhaInicio').value = times[0];
+                document.getElementById('manhaFim').value = times[1];
+            }
+            if(r.tardeHorario) {
+                const times = r.tardeHorario.split(' - ');
+                document.getElementById('tardeInicio').value = times[0];
+                document.getElementById('tardeFim').value = times[1];
+            }
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function cancelarEdicao() {
+            document.getElementById('capinaForm').reset();
+            document.getElementById('editIndex').value = "-1";
+            document.getElementById('formTitle').innerText = "Registro Diário";
+            document.getElementById('btnCancelEdit').classList.add('hidden');
+            initDate();
+        }
+
+        function excluir(idx) {
+            if(confirm("Deseja apagar este registro?")) {
+                registros.splice(idx, 1);
+                localStorage.setItem('oasis_consolidado_v1', JSON.stringify(registros));
+                renderList();
+            }
         }
 
         async function gerarImagemResumo() {
             if(registros.length === 0) return;
             document.getElementById('loadingOverlay').style.display = 'flex';
-            const agrupados = obterRegistrosAgrupados();
             
-            document.getElementById('exportContent').innerHTML = agrupados.map(g => `
-                <div style="background: #f8fafc; padding: 25px; border-radius: 20px; border: 1px solid #e2e8f0; margin-bottom: 15px;">
-                    <div style="display: flex; justify-content: space-between; align-items: center;">
-                        <div>
-                            <h4 style="font-size: 20px; font-weight: 900; color: #1e293b; margin: 0; text-transform: uppercase;">${g.operador}</h4>
-                            <p style="font-size: 13px; font-weight: 700; color: #64748b; text-transform: uppercase; margin-top: 5px;">${g.bloco} | ${g.equip}</p>
-                            <div style="margin-top: 10px; display: flex; gap: 15px;">
-                                ${g.subRegistros.map(s => `<span style="font-size: 11px; background: white; padding: 4px 8px; border-radius: 5px; border: 1px solid #e2e8f0;">${s.periodo}: ${s.horaInicio}-${s.horaFim}</span>`).join('')}
+            const content = document.getElementById('exportContent');
+            content.innerHTML = registros.map(r => `
+                <div style="background: #f8fafc; padding: 25px; border-radius: 20px; border: 1px solid #e2e8f0; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <h4 style="font-size: 20px; font-weight: 900; color: #1e293b; margin: 0; text-transform: uppercase;">${r.operador}</h4>
+                        <p style="font-size: 11px; font-weight: 700; color: #64748b; text-transform: uppercase; margin-top: 2px;">${r.bloco} | ${r.equip}</p>
+                        <div style="display: flex; gap: 10px; margin-top: 10px;">
+                            <div style="font-size: 10px; font-weight: 800; border: 1px solid #e2e8f0; padding: 5px 10px; border-radius: 10px; background: white;">
+                                MANHÃ: ${r.manhaHorario || '--'} (${formatarTempo(r.manhaMinutos)}h)
+                            </div>
+                            <div style="font-size: 10px; font-weight: 800; border: 1px solid #e2e8f0; padding: 5px 10px; border-radius: 10px; background: white;">
+                                TARDE: ${r.tardeHorario || '--'} (${formatarTempo(r.tardeMinutos)}h)
                             </div>
                         </div>
-                        <div style="text-align: right;">
-                            <span style="font-size: 28px; font-weight: 900; color: #059669;">${formatarTempo(g.totalMinutos)}h</span>
-                        </div>
+                    </div>
+                    <div style="text-align: right;">
+                        <span style="font-size: 36px; font-weight: 900; color: #065f46;">${formatarTempo(r.manhaMinutos + r.tardeMinutos)}h</span>
                     </div>
                 </div>
             `).join('');
@@ -479,26 +447,17 @@
             try {
                 const canvas = await html2canvas(document.getElementById('exportArea'), { scale: 2 });
                 const link = document.createElement('a');
-                link.download = `Relatorio_SPG_${new Date().toLocaleDateString().replace(/\//g,'-')}.jpg`;
-                link.href = canvas.toDataURL('image/jpeg', 0.9);
+                link.download = `Relatorio_Capina_SPG.jpg`;
+                link.href = canvas.toDataURL('image/jpeg', 0.95);
                 link.click();
             } finally {
                 document.getElementById('loadingOverlay').style.display = 'none';
             }
         }
 
-        function limparTudo() {
-            if(confirm("Apagar todos os registros de hoje?")) {
-                registros = [];
-                localStorage.removeItem('oasis_spg_v8');
-                renderList();
-            }
-        }
-
         function initDate() { document.getElementById('data').value = new Date().toISOString().split('T')[0]; }
         function esconderChecklist() { document.getElementById('checklistModal').style.display = 'none'; }
-
-        window.onload = () => { popularBlocos(); initDate(); renderList(); };
+        window.onload = () => { initDate(); renderList(); };
     </script>
 </body>
 </html>
