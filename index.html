@@ -15,7 +15,7 @@
         .card-base { border-radius: 2rem; background: white; border: 1px solid #e2e8f0; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.04); }
         
         #whatsappModal {
-            display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.9);
+            display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.95);
             backdrop-filter: blur(10px); z-index: 10000; align-items: center; justify-content: center; padding: 20px;
         }
 
@@ -41,18 +41,13 @@
         .section-label::after { content: ""; flex: 1; height: 1px; background: #e2e8f0; }
 
         .hidden-field { display: none; }
-        .logo-small { height: 30px; width: auto; object-fit: contain; filter: grayscale(1) opacity(0.2); }
         
-        .time-badge {
-            font-size: 10px; font-weight: 800; padding: 2px 8px; border-radius: 6px; text-transform: uppercase;
-        }
-
         .btn-action {
             width: 32px; height: 32px; display: flex; align-items: center; justify-content: center;
             border-radius: 10px; transition: all 0.2s;
         }
 
-        /* Área invisível para gerar o JPEG */
+        /* Área invisível para gerar o JPEG - Design Refinado */
         #captureArea {
             position: absolute; left: -9999px; top: 0; width: 500px; background: white; padding: 40px; border-radius: 20px;
         }
@@ -63,48 +58,54 @@
     <!-- Overlay de Carregamento -->
     <div id="loadingOverlay">
         <div class="animate-spin rounded-full h-16 w-16 border-t-4 border-emerald-600 mb-4"></div>
-        <p class="font-black uppercase tracking-tighter text-slate-800 text-center px-4">Processando Registro...</p>
+        <p class="font-black uppercase tracking-tighter text-slate-800 text-center px-4">A gravar na planilha...</p>
     </div>
 
-    <!-- Modal WhatsApp / JPEG -->
+    <!-- Modal WhatsApp com botões SIM/NÃO -->
     <div id="whatsappModal">
         <div class="bg-white w-full max-w-sm rounded-[3rem] p-8 shadow-2xl text-center">
-            <div id="imagePreviewContainer" class="mb-6 rounded-2xl overflow-hidden border-4 border-slate-100 shadow-inner">
-                <!-- Preview da imagem gerada aparecerá aqui -->
+            <div id="imagePreviewContainer" class="mb-6 rounded-3xl overflow-hidden border-4 border-slate-50 shadow-lg">
                 <img id="imgPreview" class="w-full h-auto">
             </div>
-            <h3 class="text-xl font-black text-slate-800 uppercase tracking-tighter mb-2">Bloco Registrado!</h3>
-            <p class="text-slate-500 font-bold text-[10px] uppercase tracking-widest mb-6">A imagem foi salva no seu dispositivo.<br>Deseja enviar agora para o WhatsApp?</p>
             
-            <div class="flex flex-col gap-3">
-                <button onclick="enviarWhatsApp()" class="w-full bg-[#25D366] text-white font-black py-4 rounded-2xl shadow-lg uppercase tracking-widest text-[12px] flex items-center justify-center gap-3">
-                    <i class="fab fa-whatsapp text-xl"></i> Enviar p/ WhatsApp
+            <h3 class="text-2xl font-black text-slate-800 uppercase tracking-tighter mb-2">BLOCO REGISTADO!</h3>
+            <p class="text-slate-500 font-bold text-[10px] uppercase tracking-widest mb-8 leading-relaxed">
+                A imagem foi guardada no seu dispositivo.<br>Deseja enviar agora para o WhatsApp?
+            </p>
+            
+            <div class="grid grid-cols-2 gap-4">
+                <button onclick="fecharModalWhatsapp()" class="w-full bg-slate-100 text-slate-500 font-black py-5 rounded-2xl uppercase tracking-widest text-[11px] hover:bg-slate-200 transition-colors">
+                    NÃO
                 </button>
-                <button onclick="fecharModalWhatsapp()" class="w-full bg-slate-100 text-slate-400 font-black py-4 rounded-2xl uppercase tracking-widest text-[10px]">
-                    Apenas Fechar
+                <button onclick="enviarWhatsApp()" class="w-full bg-[#25D366] text-white font-black py-5 rounded-2xl shadow-lg shadow-emerald-200 uppercase tracking-widest text-[11px] flex items-center justify-center gap-2 hover:bg-emerald-600 transition-colors">
+                    <i class="fab fa-whatsapp text-lg"></i> SIM
                 </button>
             </div>
         </div>
     </div>
 
-    <!-- Área de Captura Invisível -->
+    <!-- Área de Captura (O que vira o JPEG) -->
     <div id="captureArea">
-        <div style="text-align: center; margin-bottom: 20px;">
-            <img src="https://imgur.com/wEozr34.png" style="height: 60px;">
-            <h1 style="font-size: 24px; font-weight: 900; color: #065f46; margin-top: 10px;">RELATÓRIO DE CAPINA</h1>
+        <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 25px;">
+            <div style="width: 8px; height: 40px; background: #065f46; border-radius: 4px;"></div>
+            <div>
+                <h1 style="font-size: 28px; font-weight: 900; color: #1e293b; margin: 0; line-height: 1;">SPG OÁSIS</h1>
+                <p style="font-size: 11px; font-weight: 800; color: #64748b; margin: 5px 0 0 0; text-transform: uppercase; letter-spacing: 1px;">Comprovativo de Registo Diário</p>
+            </div>
         </div>
-        <div id="captureContent" style="border-top: 4px solid #059669; padding-top: 20px;">
-            <!-- Preenchido dinamicamente -->
+
+        <div id="captureContent" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 24px; padding: 30px;">
+            <!-- Preenchido via JS -->
         </div>
     </div>
 
     <header class="header-bg text-white shadow-2xl mb-8">
         <div class="max-w-7xl mx-auto px-6 py-6 flex justify-between items-center">
             <div class="flex items-center gap-6">
-                <img src="https://imgur.com/wEozr34.png" alt="SPG Oásis" class="h-20 w-auto object-contain">
+                <img src="https://imgur.com/wEozr34.png" alt="SPG Oásis" class="h-16 w-auto object-contain">
                 <div>
                     <h1 class="text-xl font-black uppercase tracking-tighter leading-tight">SPG Oásis</h1>
-                    <p class="text-emerald-200 font-bold text-[9px] uppercase tracking-widest">Controle de Horas de Capina</p>
+                    <p class="text-emerald-200 font-bold text-[9px] uppercase tracking-widest">Acompanhamento de Capina</p>
                 </div>
             </div>
         </div>
@@ -112,28 +113,26 @@
 
     <main class="max-w-7xl mx-auto px-6">
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
-            <!-- Form -->
+            <!-- Formulário -->
             <div class="lg:col-span-5">
                 <div class="card-base p-8 sticky top-8 border-t-8 border-t-emerald-600">
-                    <h2 class="text-lg font-black text-slate-800 uppercase mb-6 flex items-center gap-3">
-                        <i class="fas fa-plus-circle text-emerald-600"></i> <span id="formTitle">Registrar Bloco</span>
-                    </h2>
                     
+                    <!-- BOTÕES DE AÇÃO NO TOPO -->
+                    <div class="flex flex-col gap-3 mb-8">
+                        <button type="button" onclick="salvarBlocoEContinuar()" class="w-full bg-emerald-600 text-white font-black py-5 rounded-2xl shadow-xl shadow-emerald-100 uppercase tracking-widest text-[12px] hover:bg-emerald-700 transition-all active:scale-95 flex items-center justify-center gap-3">
+                            <i class="fas fa-check-circle text-lg"></i> CONFIRMAR REGISTO
+                        </button>
+                        <button type="button" id="btnCancelEdit" onclick="cancelarEdicao()" class="hidden w-full bg-slate-100 text-slate-400 font-black py-3 rounded-2xl uppercase tracking-widest text-[10px]">
+                            Cancelar Edição
+                        </button>
+                    </div>
+
                     <form id="capinaForm" class="space-y-6">
                         <input type="hidden" id="editIndex" value="-1">
                         
-                        <!-- BOTÕES MOVIDOS PARA CIMA -->
-                        <div class="flex flex-col gap-3 mb-6">
-                            <button type="button" onclick="salvarBlocoEContinuar()" class="w-full bg-emerald-600 text-white font-black py-4 rounded-2xl shadow-lg uppercase tracking-widest text-[12px] hover:bg-emerald-700 transition-all active:scale-95 flex items-center justify-center gap-3">
-                                <i class="fas fa-save"></i> SALVAR REGISTRO ATUAL
-                            </button>
-                            <button type="button" id="btnCancelEdit" onclick="cancelarEdicao()" class="hidden w-full bg-slate-100 text-slate-400 font-black py-3 rounded-2xl uppercase tracking-widest text-[10px]">
-                                Cancelar Edição
-                            </button>
-                        </div>
-
-                        <div class="space-y-4">
-                            <div class="section-label">Dados Básicos</div>
+                        <div class="space-y-5">
+                            <div class="section-label">Identificação</div>
+                            
                             <div class="grid grid-cols-2 gap-4">
                                 <div>
                                     <label class="block text-[10px] font-black text-slate-400 uppercase mb-1 ml-1">Data</label>
@@ -180,7 +179,7 @@
                                 <input type="text" id="outroEquip" placeholder="Qual Equipamento?">
                             </div>
 
-                            <div class="section-label">Horários</div>
+                            <div class="section-label">Horários de Trabalho</div>
                             <div class="grid grid-cols-2 gap-4">
                                 <div>
                                     <p class="text-[9px] font-black text-slate-400 uppercase mb-2">Manhã (Início/Fim)</p>
@@ -202,12 +201,12 @@
                 </div>
             </div>
 
-            <!-- List -->
+            <!-- Histórico -->
             <div class="lg:col-span-7">
                 <div class="flex justify-between items-end mb-8">
                     <div>
-                        <h2 class="text-2xl font-black text-slate-800 uppercase tracking-tighter">Histórico Local</h2>
-                        <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Enviados para a planilha hoje</p>
+                        <h2 class="text-2xl font-black text-slate-800 uppercase tracking-tighter">Histórico de Hoje</h2>
+                        <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Registos enviados para a nuvem</p>
                     </div>
                     <button onclick="limparHistorico()" class="text-[9px] font-black uppercase text-slate-400 hover:text-red-500 flex items-center gap-2">
                         <i class="fas fa-trash-can"></i> Limpar Lista
@@ -220,7 +219,7 @@
 
     <script>
         const scriptURL = 'https://script.google.com/macros/s/AKfycbw_sE51ELNCNXH6s_ey3FcD79kqKBaocqVwUZtBjujuBhn6DT0x5h53Krhbs8WCKwZ5hg/exec';
-        let registros = JSON.parse(localStorage.getItem('oasis_v14')) || [];
+        let registros = JSON.parse(localStorage.getItem('oasis_v15')) || [];
         let lastPayload = null;
 
         function checkOutroBloco(val) { document.getElementById('divOutroBloco').style.display = (val === 'OUTROS') ? 'block' : 'none'; }
@@ -244,7 +243,6 @@
             const form = document.getElementById('capinaForm');
             if(!form.checkValidity()) { form.reportValidity(); return; }
 
-            const editIndex = parseInt(document.getElementById('editIndex').value);
             const mI = document.getElementById('manhaInicio').value;
             const mF = document.getElementById('manhaFim').value;
             const tI = document.getElementById('tardeInicio').value;
@@ -253,24 +251,24 @@
             const minM = calcularMinutos(mI, mF);
             const minT = calcularMinutos(tI, tF);
             
-            if(minM + minT === 0) { alert("Preencha horários de início e fim."); return; }
+            if(minM + minT === 0) { alert("Indique os horários de início e fim."); return; }
 
             let op = document.getElementById('operador').value;
-            if(op === 'OUTRO') op = document.getElementById('outroOperador').value.toUpperCase() || 'NÃO IDENTIFICADO';
+            if(op === 'OUTRO') op = document.getElementById('outroOperador').value.toUpperCase() || 'DESCONHECIDO';
             
             let eq = document.getElementById('equip').value;
-            if(eq === 'OUTRO') eq = document.getElementById('outroEquip').value.toUpperCase() || 'NÃO IDENTIFICADO';
+            if(eq === 'OUTRO') eq = document.getElementById('outroEquip').value.toUpperCase() || 'N/A';
 
             let bl = document.getElementById('blocoSelect').value;
-            if(bl === 'OUTROS') bl = document.getElementById('outroBlocoInput').value.toUpperCase() || 'NÃO DEFINIDO';
+            if(bl === 'OUTROS') bl = document.getElementById('outroBlocoInput').value.toUpperCase() || 'LOCAL';
 
             const payload = {
                 "Data": document.getElementById('data').value.split('-').reverse().join('/'),
                 "Operador": op,
                 "Bloco / Local": bl,
                 "Equipamento": eq,
-                "Turno Manhã": minM > 0 ? `${mI} - ${mF}` : 'N/A',
-                "Turno Tarde": minT > 0 ? `${tI} - ${tF}` : 'N/A',
+                "Turno Manhã": minM > 0 ? `${mI} - ${mF}` : '---',
+                "Turno Tarde": minT > 0 ? `${tI} - ${tF}` : '---',
                 "Minutos Manhã (Total)": minM,
                 "Minutos Tarde (Total)": minT,
                 dataRaw: document.getElementById('data').value,
@@ -281,21 +279,19 @@
             document.getElementById('loadingOverlay').style.display = 'flex';
 
             try {
-                // Envio Planilha
+                // Enviar para a Planilha Google
                 await fetch(scriptURL, { method: 'POST', body: JSON.stringify(payload), mode: 'no-cors' });
 
-                if(editIndex > -1) { registros[editIndex] = payload; } 
-                else { registros.unshift(payload); }
-
-                localStorage.setItem('oasis_v14', JSON.stringify(registros));
+                registros.unshift(payload);
+                localStorage.setItem('oasis_v15', JSON.stringify(registros));
                 lastPayload = payload;
                 
-                // Gerar Imagem e Mostrar Popup
+                // Gerar Imagem e Abrir Popup
                 await gerarJpegERevelar(payload);
 
             } catch (e) {
                 document.getElementById('loadingOverlay').style.display = 'none';
-                alert("Erro ao salvar.");
+                alert("Erro ao comunicar com a planilha. Verifique a internet.");
             }
         }
 
@@ -303,33 +299,33 @@
             const area = document.getElementById('captureContent');
             area.innerHTML = `
                 <div style="font-family: 'Inter', sans-serif;">
-                    <p style="font-size: 14px; font-weight: 800; color: #64748b; margin-bottom: 5px;">DATA: ${data.Data}</p>
-                    <p style="font-size: 22px; font-weight: 900; color: #1e293b; margin-bottom: 20px;">${data["Bloco / Local"]}</p>
-                    
-                    <div style="background: #f8fafc; padding: 15px; border-radius: 12px; margin-bottom: 15px;">
-                        <p style="font-size: 10px; font-weight: 900; color: #94a3b8; text-transform: uppercase;">Operador</p>
-                        <p style="font-size: 16px; font-weight: 800; color: #1e293b;">${data.Operador}</p>
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+                        <span style="background: #ecfdf5; color: #059669; padding: 4px 12px; border-radius: 8px; font-weight: 900; font-size: 14px;">${data.Data}</span>
+                        <span style="color: #94a3b8; font-weight: 800; font-size: 10px; text-transform: uppercase;">TOTAL DO DIA</span>
                     </div>
 
-                    <div style="background: #f8fafc; padding: 15px; border-radius: 12px; margin-bottom: 15px;">
-                        <p style="font-size: 10px; font-weight: 900; color: #94a3b8; text-transform: uppercase;">Equipamento</p>
-                        <p style="font-size: 16px; font-weight: 800; color: #1e293b;">${data.Equipamento}</p>
+                    <div style="background: #1e293b; padding: 25px; border-radius: 20px; color: white; margin-bottom: 15px;">
+                        <p style="font-size: 10px; font-weight: 800; color: #10b981; text-transform: uppercase; margin: 0 0 5px 0;">IDENTIFICAÇÃO</p>
+                        <h2 style="font-size: 28px; font-weight: 900; margin: 0; line-height: 1.1;">${data.Operador}</h2>
+                        <p style="font-size: 14px; font-weight: 700; color: #94a3b8; margin: 10px 0 0 0;">${data["Bloco / Local"]} • ${data.Equipamento}</p>
                     </div>
 
-                    <div style="display: flex; gap: 10px; margin-bottom: 20px;">
-                        <div style="flex: 1; background: #ecfdf5; padding: 12px; border-radius: 12px; border: 1px solid #d1fae5;">
-                            <p style="font-size: 9px; font-weight: 900; color: #059669; text-transform: uppercase;">Manhã</p>
-                            <p style="font-size: 14px; font-weight: 800;">${data["Turno Manhã"]}</p>
+                    <div style="display: flex; gap: 12px; margin-bottom: 15px;">
+                        <div style="flex: 1; background: #ffffff; border: 2px solid #10b981; padding: 15px; border-radius: 18px;">
+                            <p style="font-size: 9px; font-weight: 900; color: #94a3b8; text-transform: uppercase; margin: 0 0 5px 0;">MANHÃ</p>
+                            <p style="font-size: 16px; font-weight: 900; color: #1e293b; margin: 0;">${data["Turno Manhã"]}</p>
+                            <p style="font-size: 10px; font-weight: 800; color: #10b981; margin: 4px 0 0 0;">${formatarTempo(data["Minutos Manhã (Total)"])}h</p>
                         </div>
-                        <div style="flex: 1; background: #ecfdf5; padding: 12px; border-radius: 12px; border: 1px solid #d1fae5;">
-                            <p style="font-size: 9px; font-weight: 900; color: #059669; text-transform: uppercase;">Tarde</p>
-                            <p style="font-size: 14px; font-weight: 800;">${data["Turno Tarde"]}</p>
+                        <div style="flex: 1; background: #f0fdf4; border: 2px solid #10b981; padding: 15px; border-radius: 18px;">
+                            <p style="font-size: 9px; font-weight: 900; color: #94a3b8; text-transform: uppercase; margin: 0 0 5px 0;">TARDE</p>
+                            <p style="font-size: 16px; font-weight: 900; color: #1e293b; margin: 0;">${data["Turno Tarde"]}</p>
+                            <p style="font-size: 10px; font-weight: 800; color: #10b981; margin: 4px 0 0 0;">${formatarTempo(data["Minutos Tarde (Total)"])}h</p>
                         </div>
                     </div>
 
-                    <div style="text-align: center; background: #065f46; padding: 20px; border-radius: 15px; color: white;">
-                        <p style="font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px;">Total de Horas Trabalhadas</p>
-                        <p style="font-size: 36px; font-weight: 900;">${formatarTempo(data.totalMin)}h</p>
+                    <div style="text-align: center; background: #059669; padding: 25px; border-radius: 20px; color: white;">
+                        <p style="font-size: 10px; font-weight: 900; text-transform: uppercase; letter-spacing: 2px; margin: 0 0 5px 0;">TOTAL ACUMULADO</p>
+                        <p style="font-size: 48px; font-weight: 900; margin: 0; line-height: 1;">${formatarTempo(data.totalMin)}h</p>
                     </div>
                 </div>
             `;
@@ -337,12 +333,11 @@
             const canvas = await html2canvas(document.getElementById('captureArea'), { scale: 2 });
             const dataUrl = canvas.toDataURL('image/jpeg', 0.9);
             
-            // Preview no Modal
             document.getElementById('imgPreview').src = dataUrl;
             
-            // Download Automático (Opcional, mas garante o arquivo no celular)
+            // Download para garantir que fica no telemóvel
             const link = document.createElement('a');
-            link.download = `Capina_${data["Bloco / Local"].replace(/\s/g,'_')}.jpg`;
+            link.download = `Registo_Capina_${data.Operador}_${data.Data.replace(/\//g,'-')}.jpg`;
             link.href = dataUrl;
             link.click();
 
@@ -351,8 +346,8 @@
         }
 
         function enviarWhatsApp() {
-            const texto = `*RELATÓRIO DE CAPINA - SPG OÁSIS*\n\n📅 Data: ${lastPayload.Data}\n📍 Bloco: ${lastPayload["Bloco / Local"]}\n👤 Operador: ${lastPayload.Operador}\n⚙️ Equip: ${lastPayload.Equipamento}\n\n⏱️ Manhã: ${lastPayload["Turno Manhã"]}\n⏱️ Tarde: ${lastPayload["Turno Tarde"]}\n✅ *TOTAL: ${formatarTempo(lastPayload.totalMin)}h*`;
-            const win = window.open(`https://wa.me/?text=${encodeURIComponent(texto)}`, '_blank');
+            const texto = `*SPG OÁSIS - RELATÓRIO DE CAPINA*\n\n✅ *OPERADOR:* ${lastPayload.Operador}\n📍 *LOCAL:* ${lastPayload["Bloco / Local"]}\n⚙️ *EQUIP:* ${lastPayload.Equipamento}\n\n⏱️ *HORAS:* ${formatarTempo(lastPayload.totalMin)}h\n📅 *DATA:* ${lastPayload.Data}`;
+            window.open(`https://wa.me/?text=${encodeURIComponent(texto)}`, '_blank');
             fecharModalWhatsapp();
         }
 
@@ -362,57 +357,16 @@
             renderList();
         }
 
-        function editarRegistro(index) {
-            const r = registros[index];
-            document.getElementById('editIndex').value = index;
-            document.getElementById('formTitle').innerText = "Editando Bloco";
-            document.getElementById('btnCancelEdit').classList.remove('hidden');
-            
-            document.getElementById('data').value = r.dataRaw;
-            
-            const opSelect = document.getElementById('operador');
-            opSelect.value = [...opSelect.options].some(o => o.value === r.Operador) ? r.Operador : 'OUTRO';
-            if(opSelect.value === 'OUTRO') document.getElementById('outroOperador').value = r.Operador;
-            toggleOutroOperador(opSelect.value);
-
-            const eqSelect = document.getElementById('equip');
-            eqSelect.value = [...eqSelect.options].some(o => o.value === r.Equipamento) ? r.Equipamento : 'OUTRO';
-            if(eqSelect.value === 'OUTRO') document.getElementById('outroEquip').value = r.Equipamento;
-            toggleOutroEquip(eqSelect.value);
-
-            const blSelect = document.getElementById('blocoSelect');
-            blSelect.value = [...blSelect.options].some(o => o.value === r["Bloco / Local"]) ? r["Bloco / Local"] : 'OUTROS';
-            if(blSelect.value === 'OUTROS') document.getElementById('outroBlocoInput').value = r["Bloco / Local"];
-            checkOutroBloco(blSelect.value);
-
-            document.getElementById('manhaInicio').value = r.mI || '';
-            document.getElementById('manhaFim').value = r.mF || '';
-            document.getElementById('tardeInicio').value = r.tI || '';
-            document.getElementById('tardeFim').value = r.tF || '';
-
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
-
-        function removerRegistro(index) {
-            if(confirm("Remover do histórico local?")) {
-                registros.splice(index, 1);
-                localStorage.setItem('oasis_v14', JSON.stringify(registros));
-                renderList();
-            }
-        }
-
         function limparHistorico() {
-            if(confirm("Limpar lista? (A planilha não será afetada)")) {
+            if(confirm("Deseja limpar a lista de hoje?")) {
                 registros = [];
-                localStorage.setItem('oasis_v14', JSON.stringify(registros));
+                localStorage.setItem('oasis_v15', JSON.stringify(registros));
                 renderList();
             }
         }
 
         function cancelarEdicao() {
             document.getElementById('editIndex').value = "-1";
-            document.getElementById('formTitle').innerText = "Registrar Bloco";
-            document.getElementById('btnCancelEdit').classList.add('hidden');
             document.getElementById('blocoSelect').selectedIndex = 0;
             document.getElementById('outroBlocoInput').value = "";
             document.getElementById('divOutroBloco').style.display = 'none';
@@ -424,20 +378,19 @@
 
         function renderList() {
             const list = document.getElementById('listaRegistros');
-            if(registros.length === 0) { list.innerHTML = `<div class="py-20 text-center"><p class="text-slate-300 font-black uppercase text-[10px]">Sem registros locais</p></div>`; return; }
+            if(registros.length === 0) { list.innerHTML = `<div class="py-20 text-center"><p class="text-slate-300 font-black uppercase text-[10px]">Sem registos locais</p></div>`; return; }
             
             list.innerHTML = registros.map((r, i) => `
                 <div class="record-card shadow-sm border-l-8 border-emerald-600">
-                    <img src="https://imgur.com/wEozr34.png" class="logo-small absolute right-6 top-6">
-                    <div class="flex justify-between items-start pr-12">
+                    <div class="flex justify-between items-start">
                         <div>
                             <span class="text-[9px] font-black bg-emerald-50 text-emerald-600 px-2 py-1 rounded">${r.Data}</span>
                             <h3 class="text-xl font-black text-slate-800 uppercase mt-1 leading-none">${r["Bloco / Local"]}</h3>
                             <p class="text-[10px] font-bold text-slate-400 uppercase mt-1 leading-tight">${r.Operador} | ${r.Equipamento}</p>
                         </div>
-                        <div class="flex gap-1 absolute right-6 bottom-6">
-                            <button onclick="editarRegistro(${i})" class="btn-action bg-slate-50 text-slate-400 hover:bg-emerald-50 hover:text-emerald-600"><i class="fas fa-edit text-xs"></i></button>
-                            <button onclick="removerRegistro(${i})" class="btn-action bg-slate-50 text-slate-400 hover:bg-red-50 hover:text-red-600"><i class="fas fa-trash text-xs"></i></button>
+                        <div class="text-right">
+                             <p class="text-2xl font-black text-emerald-600 leading-none">${formatarTempo(r.totalMin)}h</p>
+                             <p class="text-[8px] font-bold text-slate-300 uppercase">Duração Total</p>
                         </div>
                     </div>
                 </div>
