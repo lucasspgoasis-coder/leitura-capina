@@ -42,9 +42,14 @@
 
         .hidden-field { display: none; }
         
-        /* Área invisível para gerar o JPEG - Layout Profissional */
+        /* Área invisível para geração do JPEG */
         #captureArea {
-            position: absolute; left: -9999px; top: 0; width: 600px; background: white; padding: 50px;
+            position: absolute; left: -9999px; top: 0; width: 600px; background: white; padding: 40px;
+        }
+
+        .edit-mode {
+            border-color: #3b82f6 !important;
+            box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
         }
     </style>
 </head>
@@ -63,9 +68,9 @@
                 <img id="imgPreview" class="w-full h-auto">
             </div>
             
-            <h3 class="text-2xl font-black text-slate-800 uppercase tracking-tighter mb-2">GERADO COM SUCESSO!</h3>
+            <h3 class="text-2xl font-black text-slate-800 uppercase tracking-tighter mb-2">RELATÓRIO GERADO!</h3>
             <p class="text-slate-500 font-bold text-[10px] uppercase tracking-widest mb-8 leading-relaxed">
-                O relatório foi guardado.<br>Deseja partilhar no WhatsApp?
+                O ficheiro foi guardado no seu dispositivo.<br>Deseja enviar por WhatsApp?
             </p>
             
             <div class="grid grid-cols-2 gap-4">
@@ -79,28 +84,27 @@
         </div>
     </div>
 
-    <!-- Área de Captura (JPEG) -->
+    <!-- Área de Captura (Layout do JPEG) -->
     <div id="captureArea">
-        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 40px; border-bottom: 2px solid #f1f5f9; padding-bottom: 30px;">
-            <div style="display: flex; align-items: center; gap: 20px;">
-                <img src="https://i.imgur.com/wEozr34.png" style="height: 80px; width: auto;">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 30px; border-bottom: 2px solid #f1f5f9; padding-bottom: 20px;">
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <!-- Logo adicionado aqui para o JPEG -->
+                <img src="https://i.imgur.com/wEozr34.png" crossorigin="anonymous" style="height: 60px; width: auto;">
                 <div>
-                    <h1 style="font-size: 26px; font-weight: 900; color: #064e3b; margin: 0; letter-spacing: -1px; text-transform: uppercase;">SPG OÁSIS</h1>
-                    <p style="font-size: 11px; font-weight: 800; color: #64748b; margin: 4px 0 0 0; text-transform: uppercase; letter-spacing: 2px;">Relatório Diário de Atividades</p>
+                    <h1 style="font-size: 22px; font-weight: 900; color: #064e3b; margin: 0; letter-spacing: -1px; text-transform: uppercase;">SPG OÁSIS</h1>
+                    <p style="font-size: 9px; font-weight: 800; color: #64748b; margin: 0; text-transform: uppercase; letter-spacing: 1px;">Relatório de Capina</p>
                 </div>
             </div>
             <div style="text-align: right;">
-                <p id="capData" style="font-size: 14px; font-weight: 900; color: #1e293b; margin: 0;"></p>
-                <p style="font-size: 9px; font-weight: 700; color: #94a3b8; text-transform: uppercase; margin: 0;">Data do Registo</p>
+                <p id="capData" style="font-size: 13px; font-weight: 900; color: #1e293b; margin: 0;"></p>
+                <p style="font-size: 8px; font-weight: 700; color: #94a3b8; text-transform: uppercase; margin: 0;">Data de Execução</p>
             </div>
         </div>
 
-        <div id="captureContent">
-            <!-- Preenchido via JS -->
-        </div>
+        <div id="captureContent"></div>
 
-        <div style="margin-top: 40px; padding-top: 20px; border-top: 1px dashed #e2e8f0; text-align: center;">
-            <p style="font-size: 9px; font-weight: 700; color: #cbd5e1; text-transform: uppercase; letter-spacing: 1px;">Documento gerado automaticamente pelo Sistema de Gestão SPG Oásis</p>
+        <div style="margin-top: 30px; padding-top: 15px; border-top: 1px dashed #e2e8f0; text-align: center;">
+            <p style="font-size: 8px; font-weight: 700; color: #cbd5e1; text-transform: uppercase; letter-spacing: 1px;">Documento gerado eletronicamente - SPG Oásis</p>
         </div>
     </div>
 
@@ -120,11 +124,16 @@
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
             <!-- Formulário -->
             <div class="lg:col-span-5">
-                <div class="card-base p-8 sticky top-8 border-t-8 border-t-emerald-600">
+                <div id="formContainer" class="card-base p-8 sticky top-8 border-t-8 border-t-emerald-600 transition-all">
                     
-                    <button type="button" onclick="salvarBloco()" class="w-full bg-emerald-600 text-white font-black py-5 rounded-2xl shadow-xl shadow-emerald-100 uppercase tracking-widest text-[12px] hover:bg-emerald-700 transition-all active:scale-95 flex items-center justify-center gap-3 mb-8">
-                        <i class="fas fa-plus-circle text-lg"></i> REGISTAR NOVO BLOCO
-                    </button>
+                    <div id="btnGroup" class="mb-8 space-y-3">
+                        <button id="btnPrincipal" type="button" onclick="salvarBloco()" class="w-full bg-emerald-600 text-white font-black py-5 rounded-2xl shadow-xl shadow-emerald-100 uppercase tracking-widest text-[12px] hover:bg-emerald-700 transition-all active:scale-95 flex items-center justify-center gap-3">
+                            <i class="fas fa-plus-circle text-lg"></i> <span id="btnText">REGISTAR NOVO BLOCO</span>
+                        </button>
+                        <button id="btnCancelarEdicao" type="button" onclick="limparCampos()" class="hidden w-full bg-slate-200 text-slate-500 font-black py-3 rounded-2xl uppercase tracking-widest text-[10px] hover:bg-slate-300 transition-all">
+                            CANCELAR EDIÇÃO
+                        </button>
+                    </div>
 
                     <form id="capinaForm" class="space-y-6">
                         <div class="space-y-5">
@@ -203,7 +212,7 @@
                 <div class="flex justify-between items-center mb-8">
                     <div>
                         <h2 class="text-2xl font-black text-slate-800 uppercase tracking-tighter">Registos do Dia</h2>
-                        <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Aguardando Conclusão</p>
+                        <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Histórico Local</p>
                     </div>
                     <div class="flex gap-3">
                         <button onclick="prepararDownload()" class="bg-slate-800 text-white text-[10px] font-black px-5 py-3 rounded-xl uppercase tracking-widest flex items-center gap-2 hover:bg-slate-700">
@@ -222,6 +231,7 @@
     <script>
         const scriptURL = 'https://script.google.com/macros/s/AKfycbw_sE51ELNCNXH6s_ey3FcD79kqKBaocqVwUZtBjujuBhn6DT0x5h53Krhbs8WCKwZ5hg/exec';
         let registros = JSON.parse(localStorage.getItem('oasis_v16')) || [];
+        let editIndex = -1;
         
         function checkOutroBloco(val) { document.getElementById('divOutroBloco').style.display = (val === 'OUTROS') ? 'block' : 'none'; }
         function toggleOutroEquip(v) { document.getElementById('divOutroEquip').style.display = v==='OUTRO'?'block':'none'; }
@@ -252,15 +262,18 @@
             const minM = calcularMinutos(mI, mF);
             const minT = calcularMinutos(tI, tF);
             
-            if(minM + minT === 0) { alert("Indique os horários de trabalho."); return; }
+            if(minM + minT === 0) { alert("Por favor, preencha os horários."); return; }
 
             let op = document.getElementById('operador').value;
+            let opOriginal = op;
             if(op === 'OUTRO') op = document.getElementById('outroOperador').value.toUpperCase() || 'N/A';
             
             let eq = document.getElementById('equip').value;
+            let eqOriginal = eq;
             if(eq === 'OUTRO') eq = document.getElementById('outroEquip').value.toUpperCase() || 'N/A';
 
             let bl = document.getElementById('blocoSelect').value;
+            let blOriginal = bl;
             if(bl === 'OUTROS') bl = document.getElementById('outroBlocoInput').value.toUpperCase() || 'LOCAL';
 
             const payload = {
@@ -271,149 +284,206 @@
                 "Turno Manhã": minM > 0 ? `${mI} - ${mF}` : 'N/A',
                 "Turno Tarde": minT > 0 ? `${tI} - ${tF}` : 'N/A',
                 mI, mF, tI, tF,
+                opOriginal, eqOriginal, blOriginal,
                 totalMin: minM + minT
             };
 
             document.getElementById('loadingOverlay').style.display = 'flex';
 
             try {
-                await fetch(scriptURL, { method: 'POST', body: JSON.stringify(payload), mode: 'no-cors' });
-                registros.push(payload);
-                localStorage.setItem('oasis_v16', JSON.stringify(registros));
+                if(editIndex === -1) {
+                    await fetch(scriptURL, { method: 'POST', body: JSON.stringify(payload), mode: 'no-cors' });
+                    registros.push(payload);
+                } else {
+                    registros[editIndex] = payload;
+                }
                 
+                localStorage.setItem('oasis_v16', JSON.stringify(registros));
                 limparCampos();
                 renderList();
                 document.getElementById('loadingOverlay').style.display = 'none';
             } catch (e) {
                 document.getElementById('loadingOverlay').style.display = 'none';
-                alert("Erro ao salvar.");
+                alert("Erro ao guardar os dados.");
             }
         }
 
+        function editarRegistro(index) {
+            const r = registros[index];
+            editIndex = index;
+
+            document.getElementById('data').value = r.Data.split('/').reverse().join('-');
+            document.getElementById('operador').value = r.opOriginal || 'EDUARDO';
+            toggleOutroOperador(r.opOriginal);
+            if(r.opOriginal === 'OUTRO') document.getElementById('outroOperador').value = r.Operador;
+
+            document.getElementById('blocoSelect').value = r.blOriginal || 'BLOCO 01';
+            checkOutroBloco(r.blOriginal);
+            if(r.blOriginal === 'OUTROS') document.getElementById('outroBlocoInput').value = r["Bloco / Local"];
+
+            document.getElementById('equip').value = r.eqOriginal || 'Enxada';
+            toggleOutroEquip(r.eqOriginal);
+            if(r.eqOriginal === 'OUTRO') document.getElementById('outroEquip').value = r.Equipamento;
+
+            document.getElementById('manhaInicio').value = r.mI || "";
+            document.getElementById('manhaFim').value = r.mF || "";
+            document.getElementById('tardeInicio').value = r.tI || "";
+            document.getElementById('tardeFim').value = r.tF || "";
+
+            document.getElementById('btnText').innerText = "ATUALIZAR BLOCO";
+            document.getElementById('btnPrincipal').classList.replace('bg-emerald-600', 'bg-blue-600');
+            document.getElementById('formContainer').classList.add('edit-mode');
+            document.getElementById('formContainer').classList.replace('border-t-emerald-600', 'border-t-blue-600');
+            document.getElementById('btnCancelarEdicao').classList.remove('hidden');
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function limparCampos() {
+            editIndex = -1;
+            document.getElementById('capinaForm').reset();
+            document.getElementById('data').value = new Date().toISOString().split('T')[0];
+            document.getElementById('divOutroBloco').style.display = 'none';
+            document.getElementById('divOutroEquip').style.display = 'none';
+            document.getElementById('divOutroOperador').style.display = 'none';
+            document.getElementById('btnText').innerText = "REGISTAR NOVO BLOCO";
+            document.getElementById('btnPrincipal').classList.replace('bg-blue-600', 'bg-emerald-600');
+            document.getElementById('formContainer').classList.remove('edit-mode');
+            document.getElementById('formContainer').classList.replace('border-t-blue-600', 'border-t-emerald-600');
+            document.getElementById('btnCancelarEdicao').classList.add('hidden');
+        }
+
         async function prepararDownload() {
-            if(registros.length === 0) { alert("Registe blocos primeiro."); return; }
-            
+            if(registros.length === 0) { alert("Nenhum registo disponível."); return; }
             document.getElementById('loadingOverlay').style.display = 'flex';
             document.getElementById('capData').innerText = registros[0].Data;
 
             const area = document.getElementById('captureContent');
             area.innerHTML = '';
-
             let grandTotal = 0;
 
             registros.forEach((r) => {
                 grandTotal += r.totalMin;
                 const blockDiv = document.createElement('div');
-                blockDiv.style.marginBottom = '25px';
-                blockDiv.style.padding = '25px';
+                blockDiv.style.marginBottom = '20px';
+                blockDiv.style.padding = '20px';
                 blockDiv.style.backgroundColor = '#f8fafc';
-                blockDiv.style.borderRadius = '20px';
+                blockDiv.style.borderRadius = '15px';
                 blockDiv.style.border = '1px solid #e2e8f0';
-                
                 blockDiv.innerHTML = `
-                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
                         <div>
-                            <p style="font-size: 10px; font-weight: 800; color: #10b981; text-transform: uppercase; margin: 0 0 4px 0;">LOCALIZAÇÃO</p>
-                            <h2 style="font-size: 24px; font-weight: 900; color: #1e293b; margin: 0;">${r["Bloco / Local"]}</h2>
-                            <p style="font-size: 13px; font-weight: 600; color: #64748b; margin: 4px 0 0 0;">${r.Operador} • ${r.Equipamento}</p>
+                            <p style="font-size: 8px; font-weight: 800; color: #10b981; text-transform: uppercase; margin: 0 0 2px 0;">LOCAL</p>
+                            <h2 style="font-size: 18px; font-weight: 900; color: #1e293b; margin: 0; text-transform: uppercase;">${r["Bloco / Local"]}</h2>
+                            <p style="font-size: 11px; font-weight: 600; color: #64748b; margin: 2px 0 0 0;">${r.Operador} • ${r.Equipamento}</p>
                         </div>
                         <div style="text-align: right;">
-                            <p style="font-size: 10px; font-weight: 800; color: #94a3b8; text-transform: uppercase; margin: 0 0 4px 0;">TEMPO</p>
-                            <p style="font-size: 24px; font-weight: 900; color: #059669; margin: 0;">${formatarTempo(r.totalMin)}h</p>
+                            <p style="font-size: 8px; font-weight: 800; color: #94a3b8; text-transform: uppercase; margin: 0 0 2px 0;">DURAÇÃO</p>
+                            <p style="font-size: 18px; font-weight: 900; color: #059669; margin: 0;">${formatarTempo(r.totalMin)}h</p>
                         </div>
                     </div>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; border-top: 1px solid #e2e8f0; padding-top: 15px;">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; border-top: 1px solid #f1f5f9; padding-top: 10px;">
                         <div>
-                            <p style="font-size: 9px; font-weight: 800; color: #94a3b8; text-transform: uppercase; margin: 0 0 2px 0;">MANHÃ</p>
-                            <p style="font-size: 14px; font-weight: 700; color: #334155;">${r["Turno Manhã"]}</p>
+                            <p style="font-size: 7px; font-weight: 800; color: #94a3b8; text-transform: uppercase; margin: 0;">Início/Fim Manhã</p>
+                            <p style="font-size: 12px; font-weight: 700; color: #334155;">${r["Turno Manhã"]}</p>
                         </div>
                         <div>
-                            <p style="font-size: 9px; font-weight: 800; color: #94a3b8; text-transform: uppercase; margin: 0 0 2px 0;">TARDE</p>
-                            <p style="font-size: 14px; font-weight: 700; color: #334155;">${r["Turno Tarde"]}</p>
+                            <p style="font-size: 7px; font-weight: 800; color: #94a3b8; text-transform: uppercase; margin: 0;">Início/Fim Tarde</p>
+                            <p style="font-size: 12px; font-weight: 700; color: #334155;">${r["Turno Tarde"]}</p>
                         </div>
                     </div>
                 `;
                 area.appendChild(blockDiv);
             });
 
-            // Flashcard TOTAL - Reduzido conforme pedido
+            // Flashcard TOTAL - Reduzido e compacto
             const totalDiv = document.createElement('div');
             totalDiv.style.backgroundColor = '#065f46';
             totalDiv.style.color = '#ffffff';
-            totalDiv.style.padding = '20px 30px'; // Reduzi o padding
-            totalDiv.style.borderRadius = '20px';
+            totalDiv.style.padding = '12px 20px';
+            totalDiv.style.borderRadius = '15px';
             totalDiv.style.textAlign = 'center';
-            totalDiv.style.marginTop = '20px';
+            totalDiv.style.marginTop = '15px';
             totalDiv.innerHTML = `
-                <p style="font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 5px; opacity: 0.8;">DURAÇÃO TOTAL DA JORNADA</p>
-                <p style="font-size: 42px; font-weight: 900; margin: 0; line-height: 1;">${formatarTempo(grandTotal)}h</p>
+                <p style="font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 2px; opacity: 0.9;">DURAÇÃO TOTAL DA JORNADA</p>
+                <p style="font-size: 32px; font-weight: 900; margin: 0; line-height: 1;">${formatarTempo(grandTotal)}h</p>
             `;
             area.appendChild(totalDiv);
 
-            const canvas = await html2canvas(document.getElementById('captureArea'), { scale: 2 });
-            const dataUrl = canvas.toDataURL('image/jpeg', 0.9);
-            document.getElementById('imgPreview').src = dataUrl;
+            // Geração da Imagem
+            try {
+                const canvas = await html2canvas(document.getElementById('captureArea'), { 
+                    scale: 2,
+                    useCORS: true,
+                    allowTaint: true
+                });
+                const imgData = canvas.toDataURL('image/jpeg', 0.9);
+                document.getElementById('imgPreview').src = imgData;
+                
+                const link = document.createElement('a');
+                link.download = `Relatorio_Oasis_${registros[0].Data.replace(/\//g, '-')}.jpg`;
+                link.href = imgData;
+                link.click();
 
-            const link = document.createElement('a');
-            link.download = `Relatorio_Oasis_${registros[0].Data.replace(/\//g, '-')}.jpg`;
-            link.href = dataUrl;
-            link.click();
-
-            document.getElementById('loadingOverlay').style.display = 'none';
-            document.getElementById('whatsappModal').style.display = 'flex';
+                document.getElementById('loadingOverlay').style.display = 'none';
+                document.getElementById('whatsappModal').style.display = 'flex';
+            } catch (err) {
+                console.error(err);
+                document.getElementById('loadingOverlay').style.display = 'none';
+                alert("Erro ao processar imagem. Tente novamente.");
+            }
         }
 
         function enviarWhatsApp() {
-            let resumo = `*SPG OÁSIS - RELATÓRIO*\n📅 *DATA:* ${registros[0].Data}\n\n`;
+            let msg = `*SPG OÁSIS - RELATÓRIO DIÁRIO*\n📅 *DATA:* ${registros[0].Data}\n\n`;
             let total = 0;
             registros.forEach(r => {
-                resumo += `📍 *${r["Bloco / Local"]}*: ${formatarTempo(r.totalMin)}h\n`;
+                msg += `📍 *${r["Bloco / Local"]}*: ${formatarTempo(r.totalMin)}h\n`;
                 total += r.totalMin;
             });
-            resumo += `\n⏱️ *TOTAL:* ${formatarTempo(total)}h`;
-            window.open(`https://wa.me/?text=${encodeURIComponent(resumo)}`, '_blank');
+            msg += `\n⏱️ *JORNADA TOTAL:* ${formatarTempo(total)}h`;
+            window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
             fecharModalWhatsapp();
         }
 
         function fecharModalWhatsapp() { document.getElementById('whatsappModal').style.display = 'none'; }
 
         function limparHistorico() {
-            if(confirm("Apagar registos de hoje?")) {
+            if(confirm("Deseja apagar todos os registos do dia?")) {
                 registros = [];
                 localStorage.setItem('oasis_v16', JSON.stringify(registros));
                 renderList();
+                limparCampos();
             }
-        }
-
-        function limparCampos() {
-            document.getElementById('manhaInicio').value = "";
-            document.getElementById('manhaFim').value = "";
-            document.getElementById('tardeInicio').value = "";
-            document.getElementById('tardeFim').value = "";
         }
 
         function renderList() {
             const list = document.getElementById('listaRegistros');
-            if(registros.length === 0) { list.innerHTML = `<div class="py-20 text-center text-slate-300 font-bold uppercase text-[10px]">Sem registos</div>`; return; }
+            if(registros.length === 0) { list.innerHTML = `<div class="py-20 text-center text-slate-300 font-bold uppercase text-[10px]">Sem registos locais</div>`; return; }
             
-            list.innerHTML = registros.map((r) => `
+            list.innerHTML = registros.map((r, i) => `
                 <div class="record-card shadow-sm border-l-4 border-emerald-500">
                     <div class="flex justify-between items-start mb-3">
                         <div class="flex items-center gap-3">
                             <img src="https://i.imgur.com/wEozr34.png" class="h-10 w-auto">
                             <div>
                                 <h3 class="text-lg font-black text-slate-800 uppercase leading-none">${r["Bloco / Local"]}</h3>
-                                <p class="text-[9px] font-bold text-slate-400 uppercase mt-1">${r.Operador}</p>
+                                <p class="text-[9px] font-bold text-slate-400 uppercase mt-1">${r.Operador} • ${r.Equipamento}</p>
                             </div>
                         </div>
-                        <p class="text-xl font-black text-emerald-600">${formatarTempo(r.totalMin)}h</p>
+                        <div class="flex items-center gap-3">
+                            <button onclick="editarRegistro(${i})" class="text-blue-400 hover:text-blue-600 p-2">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <p class="text-xl font-black text-emerald-600">${formatarTempo(r.totalMin)}h</p>
+                        </div>
                     </div>
                     <div class="grid grid-cols-2 gap-2 border-t border-slate-50 pt-3">
-                        <div class="bg-slate-50 p-2 rounded-lg">
+                        <div class="bg-slate-50 p-2 rounded-lg text-center">
                             <p class="text-[7px] font-black text-slate-400 uppercase mb-0.5">Manhã</p>
                             <p class="text-[10px] font-bold text-slate-600">${r["Turno Manhã"]}</p>
                         </div>
-                        <div class="bg-slate-50 p-2 rounded-lg">
+                        <div class="bg-slate-50 p-2 rounded-lg text-center">
                             <p class="text-[7px] font-black text-slate-400 uppercase mb-0.5">Tarde</p>
                             <p class="text-[10px] font-bold text-slate-600">${r["Turno Tarde"]}</p>
                         </div>
