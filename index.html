@@ -14,9 +14,9 @@
         .header-bg { background: linear-gradient(135deg, #065f46 0%, #054a3a 100%); }
         .card-base { border-radius: 2rem; background: white; border: 1px solid #e2e8f0; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.04); }
         
-        #whatsappModal {
-            display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.95);
-            backdrop-filter: blur(10px); z-index: 10000; align-items: center; justify-content: center; padding: 20px;
+        #whatsappModal, #confirmModal {
+            display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.9);
+            backdrop-filter: blur(8px); z-index: 10000; align-items: center; justify-content: center; padding: 20px;
         }
 
         .record-card {
@@ -42,7 +42,6 @@
 
         .hidden-field { display: none; }
         
-        /* Área invisível para geração do JPEG */
         #captureArea {
             position: absolute; left: -9999px; top: 0; width: 600px; background: white; padding: 40px;
         }
@@ -61,7 +60,28 @@
         <p class="font-black uppercase tracking-tighter text-slate-800 text-center px-4">A processar...</p>
     </div>
 
-    <!-- Modal WhatsApp -->
+    <!-- Modal de Confirmação de Limpeza -->
+    <div id="confirmModal">
+        <div class="bg-white w-full max-w-xs rounded-[2.5rem] p-8 shadow-2xl text-center">
+            <div class="w-16 h-16 bg-red-50 text-red-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-trash-alt text-2xl"></i>
+            </div>
+            <h3 class="text-xl font-black text-slate-800 uppercase tracking-tighter mb-2">APAGAR TUDO?</h3>
+            <p class="text-slate-500 font-bold text-[10px] uppercase tracking-widest mb-8 leading-relaxed">
+                Esta ação irá remover todos os registos de hoje. Deseja continuar?
+            </p>
+            <div class="grid grid-cols-2 gap-3">
+                <button onclick="fecharConfirmModal()" class="w-full bg-slate-100 text-slate-500 font-black py-4 rounded-2xl uppercase tracking-widest text-[11px]">
+                    NÃO
+                </button>
+                <button onclick="confirmarLimpezaTotal()" class="w-full bg-red-500 text-white font-black py-4 rounded-2xl shadow-lg shadow-red-100 uppercase tracking-widest text-[11px]">
+                    SIM
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal WhatsApp / Preview -->
     <div id="whatsappModal">
         <div class="bg-white w-full max-w-sm rounded-[3rem] p-8 shadow-2xl text-center">
             <div id="imagePreviewContainer" class="mb-6 rounded-3xl overflow-hidden border-4 border-slate-50 shadow-lg">
@@ -84,11 +104,15 @@
         </div>
     </div>
 
-    <!-- Área de Captura (Layout do JPEG) -->
+    <!-- Área Oculta para Captura JPEG -->
     <div id="captureArea">
+        <div style="text-align: center; margin-bottom: 20px;">
+            <span style="background-color: #f1f5f9; color: #64748b; padding: 6px 15px; border-radius: 100px; font-size: 10px; font-weight: 900; letter-spacing: 2px; text-transform: uppercase; border: 1px solid #e2e8f0;">
+                DADOS OFICIAIS
+            </span>
+        </div>
         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 30px; border-bottom: 2px solid #f1f5f9; padding-bottom: 20px;">
             <div style="display: flex; align-items: center; gap: 15px;">
-                <!-- Logo adicionado aqui para o JPEG -->
                 <img src="https://i.imgur.com/wEozr34.png" crossorigin="anonymous" style="height: 60px; width: auto;">
                 <div>
                     <h1 style="font-size: 22px; font-weight: 900; color: #064e3b; margin: 0; letter-spacing: -1px; text-transform: uppercase;">SPG OÁSIS</h1>
@@ -100,9 +124,7 @@
                 <p style="font-size: 8px; font-weight: 700; color: #94a3b8; text-transform: uppercase; margin: 0;">Data de Execução</p>
             </div>
         </div>
-
         <div id="captureContent"></div>
-
         <div style="margin-top: 30px; padding-top: 15px; border-top: 1px dashed #e2e8f0; text-align: center;">
             <p style="font-size: 8px; font-weight: 700; color: #cbd5e1; text-transform: uppercase; letter-spacing: 1px;">Documento gerado eletronicamente - SPG Oásis</p>
         </div>
@@ -114,7 +136,7 @@
                 <img src="https://i.imgur.com/wEozr34.png" alt="SPG Oásis" class="h-16 w-auto">
                 <div>
                     <h1 class="text-xl font-black uppercase tracking-tighter leading-tight">SPG Oásis</h1>
-                    <p class="text-emerald-200 font-bold text-[9px] uppercase tracking-widest">Controle de Manutenção</p>
+                    <p class="text-emerald-200 font-bold text-[9px] uppercase tracking-widest">Registro Diário de Capina</p>
                 </div>
             </div>
         </div>
@@ -125,7 +147,6 @@
             <!-- Formulário -->
             <div class="lg:col-span-5">
                 <div id="formContainer" class="card-base p-8 sticky top-8 border-t-8 border-t-emerald-600 transition-all">
-                    
                     <div id="btnGroup" class="mb-8 space-y-3">
                         <button id="btnPrincipal" type="button" onclick="salvarBloco()" class="w-full bg-emerald-600 text-white font-black py-5 rounded-2xl shadow-xl shadow-emerald-100 uppercase tracking-widest text-[12px] hover:bg-emerald-700 transition-all active:scale-95 flex items-center justify-center gap-3">
                             <i class="fas fa-plus-circle text-lg"></i> <span id="btnText">REGISTAR NOVO BLOCO</span>
@@ -138,7 +159,6 @@
                     <form id="capinaForm" class="space-y-6">
                         <div class="space-y-5">
                             <div class="section-label">Identificação</div>
-                            
                             <div class="grid grid-cols-2 gap-4">
                                 <div>
                                     <label class="block text-[10px] font-black text-slate-400 uppercase mb-1 ml-1">Data</label>
@@ -156,10 +176,9 @@
                             <div id="divOutroOperador" class="hidden-field">
                                 <input type="text" id="outroOperador" placeholder="Nome do Operador">
                             </div>
-
                             <div class="grid grid-cols-2 gap-4">
                                 <div>
-                                    <label class="block text-[10px] font-black text-slate-400 uppercase mb-1 ml-1">Local (Bloco)</label>
+                                    <label class="block text-[10px] font-black text-slate-400 uppercase mb-1 ml-1">Local</label>
                                     <select id="blocoSelect" onchange="checkOutroBloco(this.value)">
                                         <option value="BLOCO 01">Bloco 01</option>
                                         <option value="BLOCO 02">Bloco 02</option>
@@ -188,14 +207,14 @@
                             <div class="section-label">Horários</div>
                             <div class="grid grid-cols-2 gap-4">
                                 <div>
-                                    <p class="text-[9px] font-black text-slate-400 uppercase mb-2">Período Manhã</p>
+                                    <p class="text-[9px] font-black text-slate-400 uppercase mb-2">Manhã</p>
                                     <div class="grid grid-cols-2 gap-1">
                                         <input type="time" id="manhaInicio">
                                         <input type="time" id="manhaFim">
                                     </div>
                                 </div>
                                 <div>
-                                    <p class="text-[9px] font-black text-slate-400 uppercase mb-2">Período Tarde</p>
+                                    <p class="text-[9px] font-black text-slate-400 uppercase mb-2">Tarde</p>
                                     <div class="grid grid-cols-2 gap-1">
                                         <input type="time" id="tardeInicio">
                                         <input type="time" id="tardeFim">
@@ -207,18 +226,18 @@
                 </div>
             </div>
 
-            <!-- Histórico -->
+            <!-- Listagem -->
             <div class="lg:col-span-7">
                 <div class="flex justify-between items-center mb-8">
                     <div>
                         <h2 class="text-2xl font-black text-slate-800 uppercase tracking-tighter">Registos do Dia</h2>
-                        <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Histórico Local</p>
+                        <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Controle Local</p>
                     </div>
                     <div class="flex gap-3">
-                        <button onclick="prepararDownload()" class="bg-slate-800 text-white text-[10px] font-black px-5 py-3 rounded-xl uppercase tracking-widest flex items-center gap-2 hover:bg-slate-700">
-                            <i class="fas fa-download"></i> Gerar JPEG do Dia
+                        <button onclick="prepararDownload()" class="bg-slate-800 text-white text-[10px] font-black px-5 py-3 rounded-xl uppercase tracking-widest flex items-center gap-2 hover:bg-slate-700 transition-all">
+                            <i class="fas fa-download"></i> JPEG
                         </button>
-                        <button onclick="limparHistorico()" class="text-slate-400 hover:text-red-500 transition-colors">
+                        <button onclick="abrirConfirmModal()" class="bg-white text-slate-400 hover:text-red-500 hover:bg-red-50 transition-all w-11 h-11 rounded-xl flex items-center justify-center border border-slate-200 shadow-sm" title="Limpar Tudo">
                             <i class="fas fa-trash-alt"></i>
                         </button>
                     </div>
@@ -250,6 +269,24 @@
             return d > 0 ? d : 0;
         }
 
+        // Funções do Modal de Confirmação
+        function abrirConfirmModal() {
+            if(registros.length === 0) return;
+            document.getElementById('confirmModal').style.display = 'flex';
+        }
+
+        function fecharConfirmModal() {
+            document.getElementById('confirmModal').style.display = 'none';
+        }
+
+        function confirmarLimpezaTotal() {
+            registros = [];
+            localStorage.setItem('oasis_v16', JSON.stringify(registros));
+            renderList();
+            limparCampos();
+            fecharConfirmModal();
+        }
+
         async function salvarBloco() {
             const form = document.getElementById('capinaForm');
             if(!form.checkValidity()) { form.reportValidity(); return; }
@@ -262,7 +299,7 @@
             const minM = calcularMinutos(mI, mF);
             const minT = calcularMinutos(tI, tF);
             
-            if(minM + minT === 0) { alert("Por favor, preencha os horários."); return; }
+            if(minM + minT === 0) { alert("Preencha os horários."); return; }
 
             let op = document.getElementById('operador').value;
             let opOriginal = op;
@@ -304,38 +341,32 @@
                 document.getElementById('loadingOverlay').style.display = 'none';
             } catch (e) {
                 document.getElementById('loadingOverlay').style.display = 'none';
-                alert("Erro ao guardar os dados.");
+                alert("Erro ao enviar.");
             }
         }
 
         function editarRegistro(index) {
             const r = registros[index];
             editIndex = index;
-
             document.getElementById('data').value = r.Data.split('/').reverse().join('-');
             document.getElementById('operador').value = r.opOriginal || 'EDUARDO';
             toggleOutroOperador(r.opOriginal);
             if(r.opOriginal === 'OUTRO') document.getElementById('outroOperador').value = r.Operador;
-
             document.getElementById('blocoSelect').value = r.blOriginal || 'BLOCO 01';
             checkOutroBloco(r.blOriginal);
             if(r.blOriginal === 'OUTROS') document.getElementById('outroBlocoInput').value = r["Bloco / Local"];
-
             document.getElementById('equip').value = r.eqOriginal || 'Enxada';
             toggleOutroEquip(r.eqOriginal);
             if(r.eqOriginal === 'OUTRO') document.getElementById('outroEquip').value = r.Equipamento;
-
             document.getElementById('manhaInicio').value = r.mI || "";
             document.getElementById('manhaFim').value = r.mF || "";
             document.getElementById('tardeInicio').value = r.tI || "";
             document.getElementById('tardeFim').value = r.tF || "";
-
             document.getElementById('btnText').innerText = "ATUALIZAR BLOCO";
             document.getElementById('btnPrincipal').classList.replace('bg-emerald-600', 'bg-blue-600');
             document.getElementById('formContainer').classList.add('edit-mode');
             document.getElementById('formContainer').classList.replace('border-t-emerald-600', 'border-t-blue-600');
             document.getElementById('btnCancelarEdicao').classList.remove('hidden');
-
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
@@ -353,114 +384,12 @@
             document.getElementById('btnCancelarEdicao').classList.add('hidden');
         }
 
-        async function prepararDownload() {
-            if(registros.length === 0) { alert("Nenhum registo disponível."); return; }
-            document.getElementById('loadingOverlay').style.display = 'flex';
-            document.getElementById('capData').innerText = registros[0].Data;
-
-            const area = document.getElementById('captureContent');
-            area.innerHTML = '';
-            let grandTotal = 0;
-
-            registros.forEach((r) => {
-                grandTotal += r.totalMin;
-                const blockDiv = document.createElement('div');
-                blockDiv.style.marginBottom = '20px';
-                blockDiv.style.padding = '20px';
-                blockDiv.style.backgroundColor = '#f8fafc';
-                blockDiv.style.borderRadius = '15px';
-                blockDiv.style.border = '1px solid #e2e8f0';
-                blockDiv.innerHTML = `
-                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px;">
-                        <div>
-                            <p style="font-size: 8px; font-weight: 800; color: #10b981; text-transform: uppercase; margin: 0 0 2px 0;">LOCAL</p>
-                            <h2 style="font-size: 18px; font-weight: 900; color: #1e293b; margin: 0; text-transform: uppercase;">${r["Bloco / Local"]}</h2>
-                            <p style="font-size: 11px; font-weight: 600; color: #64748b; margin: 2px 0 0 0;">${r.Operador} • ${r.Equipamento}</p>
-                        </div>
-                        <div style="text-align: right;">
-                            <p style="font-size: 8px; font-weight: 800; color: #94a3b8; text-transform: uppercase; margin: 0 0 2px 0;">DURAÇÃO</p>
-                            <p style="font-size: 18px; font-weight: 900; color: #059669; margin: 0;">${formatarTempo(r.totalMin)}h</p>
-                        </div>
-                    </div>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; border-top: 1px solid #f1f5f9; padding-top: 10px;">
-                        <div>
-                            <p style="font-size: 7px; font-weight: 800; color: #94a3b8; text-transform: uppercase; margin: 0;">Início/Fim Manhã</p>
-                            <p style="font-size: 12px; font-weight: 700; color: #334155;">${r["Turno Manhã"]}</p>
-                        </div>
-                        <div>
-                            <p style="font-size: 7px; font-weight: 800; color: #94a3b8; text-transform: uppercase; margin: 0;">Início/Fim Tarde</p>
-                            <p style="font-size: 12px; font-weight: 700; color: #334155;">${r["Turno Tarde"]}</p>
-                        </div>
-                    </div>
-                `;
-                area.appendChild(blockDiv);
-            });
-
-            // Flashcard TOTAL - Reduzido e compacto
-            const totalDiv = document.createElement('div');
-            totalDiv.style.backgroundColor = '#065f46';
-            totalDiv.style.color = '#ffffff';
-            totalDiv.style.padding = '12px 20px';
-            totalDiv.style.borderRadius = '15px';
-            totalDiv.style.textAlign = 'center';
-            totalDiv.style.marginTop = '15px';
-            totalDiv.innerHTML = `
-                <p style="font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 2px; opacity: 0.9;">DURAÇÃO TOTAL DA JORNADA</p>
-                <p style="font-size: 32px; font-weight: 900; margin: 0; line-height: 1;">${formatarTempo(grandTotal)}h</p>
-            `;
-            area.appendChild(totalDiv);
-
-            // Geração da Imagem
-            try {
-                const canvas = await html2canvas(document.getElementById('captureArea'), { 
-                    scale: 2,
-                    useCORS: true,
-                    allowTaint: true
-                });
-                const imgData = canvas.toDataURL('image/jpeg', 0.9);
-                document.getElementById('imgPreview').src = imgData;
-                
-                const link = document.createElement('a');
-                link.download = `Relatorio_Oasis_${registros[0].Data.replace(/\//g, '-')}.jpg`;
-                link.href = imgData;
-                link.click();
-
-                document.getElementById('loadingOverlay').style.display = 'none';
-                document.getElementById('whatsappModal').style.display = 'flex';
-            } catch (err) {
-                console.error(err);
-                document.getElementById('loadingOverlay').style.display = 'none';
-                alert("Erro ao processar imagem. Tente novamente.");
-            }
-        }
-
-        function enviarWhatsApp() {
-            let msg = `*SPG OÁSIS - RELATÓRIO DIÁRIO*\n📅 *DATA:* ${registros[0].Data}\n\n`;
-            let total = 0;
-            registros.forEach(r => {
-                msg += `📍 *${r["Bloco / Local"]}*: ${formatarTempo(r.totalMin)}h\n`;
-                total += r.totalMin;
-            });
-            msg += `\n⏱️ *JORNADA TOTAL:* ${formatarTempo(total)}h`;
-            window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
-            fecharModalWhatsapp();
-        }
-
-        function fecharModalWhatsapp() { document.getElementById('whatsappModal').style.display = 'none'; }
-
-        function limparHistorico() {
-            if(confirm("Deseja apagar todos os registos do dia?")) {
-                registros = [];
-                localStorage.setItem('oasis_v16', JSON.stringify(registros));
-                renderList();
-                limparCampos();
-            }
-        }
-
         function renderList() {
             const list = document.getElementById('listaRegistros');
-            if(registros.length === 0) { list.innerHTML = `<div class="py-20 text-center text-slate-300 font-bold uppercase text-[10px]">Sem registos locais</div>`; return; }
-            
+            if(registros.length === 0) { 
+                list.innerHTML = `<div class="py-20 text-center text-slate-300 font-bold uppercase text-[10px]">Sem registos locais</div>`; 
+                return; 
+            }
             list.innerHTML = registros.map((r, i) => `
                 <div class="record-card shadow-sm border-l-4 border-emerald-500">
                     <div class="flex justify-between items-start mb-3">
@@ -472,7 +401,7 @@
                             </div>
                         </div>
                         <div class="flex items-center gap-3">
-                            <button onclick="editarRegistro(${i})" class="text-blue-400 hover:text-blue-600 p-2">
+                            <button onclick="editarRegistro(${i})" class="text-blue-400 hover:text-blue-600 p-2 transition-all">
                                 <i class="fas fa-edit"></i>
                             </button>
                             <p class="text-xl font-black text-emerald-600">${formatarTempo(r.totalMin)}h</p>
@@ -492,6 +421,69 @@
             `).join('');
         }
 
+        async function prepararDownload() {
+            if(registros.length === 0) return;
+            document.getElementById('loadingOverlay').style.display = 'flex';
+            document.getElementById('capData').innerText = registros[0].Data;
+            const area = document.getElementById('captureContent');
+            area.innerHTML = '';
+            let grandTotal = 0;
+            registros.forEach((r) => {
+                grandTotal += r.totalMin;
+                const blockDiv = document.createElement('div');
+                blockDiv.style.marginBottom = '15px';
+                blockDiv.style.padding = '15px';
+                blockDiv.style.backgroundColor = '#f8fafc';
+                blockDiv.style.borderRadius = '12px';
+                blockDiv.style.border = '1px solid #e2e8f0';
+                blockDiv.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+                        <div>
+                            <h2 style="font-size: 16px; font-weight: 900; color: #1e293b; margin: 0; text-transform: uppercase;">${r["Bloco / Local"]}</h2>
+                            <p style="font-size: 10px; font-weight: 600; color: #64748b; margin: 2px 0 0 0;">${r.Operador} • ${r.Equipamento}</p>
+                        </div>
+                        <p style="font-size: 16px; font-weight: 900; color: #059669; margin: 0;">${formatarTempo(r.totalMin)}h</p>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; border-top: 1px solid #f1f5f9; padding-top: 8px;">
+                        <p style="font-size: 11px; color: #334155; margin: 0;"><b>Manhã:</b> ${r["Turno Manhã"]}</p>
+                        <p style="font-size: 11px; color: #334155; margin: 0;"><b>Tarde:</b> ${r["Turno Tarde"]}</p>
+                    </div>
+                `;
+                area.appendChild(blockDiv);
+            });
+            const totalDiv = document.createElement('div');
+            totalDiv.style.backgroundColor = '#065f46';
+            totalDiv.style.color = '#ffffff';
+            totalDiv.style.padding = '15px';
+            totalDiv.style.borderRadius = '12px';
+            totalDiv.style.textAlign = 'center';
+            totalDiv.style.marginTop = '10px';
+            totalDiv.innerHTML = `<p style="font-size: 28px; font-weight: 900; margin: 0;">TOTAL: ${formatarTempo(grandTotal)}h</p>`;
+            area.appendChild(totalDiv);
+            try {
+                const canvas = await html2canvas(document.getElementById('captureArea'), { scale: 2, useCORS: true });
+                document.getElementById('imgPreview').src = canvas.toDataURL('image/jpeg', 0.9);
+                document.getElementById('loadingOverlay').style.display = 'none';
+                document.getElementById('whatsappModal').style.display = 'flex';
+            } catch (err) {
+                document.getElementById('loadingOverlay').style.display = 'none';
+                alert("Erro ao capturar.");
+            }
+        }
+
+        function enviarWhatsApp() {
+            let msg = `*RELATÓRIO SPG OÁSIS*\n📅 *DATA:* ${registros[0].Data}\n\n`;
+            let total = 0;
+            registros.forEach(r => {
+                msg += `📍 *${r["Bloco / Local"]}*: ${formatarTempo(r.totalMin)}h\n`;
+                total += r.totalMin;
+            });
+            msg += `\n⏱️ *TOTAL:* ${formatarTempo(total)}h`;
+            window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
+            fecharModalWhatsapp();
+        }
+
+        function fecharModalWhatsapp() { document.getElementById('whatsappModal').style.display = 'none'; }
         window.onload = () => { 
             document.getElementById('data').value = new Date().toISOString().split('T')[0];
             renderList(); 
