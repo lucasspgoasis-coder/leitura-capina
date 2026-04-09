@@ -29,7 +29,7 @@
             z-index: 11000; flex-direction: column; align-items: center; justify-content: center;
         }
 
-        input, select {
+        input, select, textarea {
             background: #f8fafc !important; border: 2px solid #e2e8f0 !important;
             border-radius: 1rem !important; padding: 0.75rem !important; font-weight: 700 !important; width: 100%;
         }
@@ -42,6 +42,7 @@
 
         .hidden-field { display: none; }
         
+        /* Área invisível para captura da imagem de alta qualidade */
         #captureArea {
             position: absolute; left: -9999px; top: 0; width: 600px; background: white; padding: 40px;
         }
@@ -68,7 +69,7 @@
             </div>
             <h3 class="text-xl font-black text-slate-800 uppercase tracking-tighter mb-2">APAGAR TUDO?</h3>
             <p class="text-slate-500 font-bold text-[10px] uppercase tracking-widest mb-8 leading-relaxed">
-                Esta ação irá remover todos os registos de hoje. Deseja continuar?
+                Isto removerá os registos apenas deste dispositivo.
             </p>
             <div class="grid grid-cols-2 gap-3">
                 <button onclick="fecharConfirmModal()" class="w-full bg-slate-100 text-slate-500 font-black py-4 rounded-2xl uppercase tracking-widest text-[11px]">
@@ -81,24 +82,22 @@
         </div>
     </div>
 
-    <!-- Modal WhatsApp / Preview -->
+    <!-- Modal WhatsApp / Preview / Download -->
     <div id="whatsappModal">
         <div class="bg-white w-full max-w-sm rounded-[3rem] p-8 shadow-2xl text-center">
             <div id="imagePreviewContainer" class="mb-6 rounded-3xl overflow-hidden border-4 border-slate-50 shadow-lg">
                 <img id="imgPreview" class="w-full h-auto">
             </div>
             
-            <h3 class="text-2xl font-black text-slate-800 uppercase tracking-tighter mb-2">RELATÓRIO GERADO!</h3>
-            <p class="text-slate-500 font-bold text-[10px] uppercase tracking-widest mb-8 leading-relaxed">
-                O ficheiro foi guardado no seu dispositivo.<br>Deseja enviar por WhatsApp?
-            </p>
+            <h3 class="text-2xl font-black text-slate-800 uppercase tracking-tighter mb-1">RELATÓRIO PRONTO!</h3>
+            <p class="text-emerald-600 font-black text-[10px] uppercase tracking-widest mb-6">Download concluído automaticamente</p>
             
-            <div class="grid grid-cols-2 gap-4">
-                <button onclick="fecharModalWhatsapp()" class="w-full bg-slate-100 text-slate-500 font-black py-5 rounded-2xl uppercase tracking-widest text-[11px]">
-                    FECHAR
-                </button>
+            <div class="grid grid-cols-1 gap-3">
                 <button onclick="enviarWhatsApp()" class="w-full bg-[#25D366] text-white font-black py-5 rounded-2xl shadow-lg shadow-emerald-200 uppercase tracking-widest text-[11px] flex items-center justify-center gap-2">
-                    <i class="fab fa-whatsapp text-lg"></i> ENVIAR
+                    <i class="fab fa-whatsapp text-lg"></i> ENVIAR POR WHATSAPP
+                </button>
+                <button onclick="fecharModalWhatsapp()" class="w-full bg-slate-100 text-slate-500 font-black py-4 rounded-2xl uppercase tracking-widest text-[11px]">
+                    FECHAR
                 </button>
             </div>
         </div>
@@ -108,7 +107,7 @@
     <div id="captureArea">
         <div style="text-align: center; margin-bottom: 20px;">
             <span style="background-color: #f1f5f9; color: #64748b; padding: 6px 15px; border-radius: 100px; font-size: 10px; font-weight: 900; letter-spacing: 2px; text-transform: uppercase; border: 1px solid #e2e8f0;">
-                DADOS OFICIAIS
+                RELATÓRIO DIÁRIO
             </span>
         </div>
         <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 30px; border-bottom: 2px solid #f1f5f9; padding-bottom: 20px;">
@@ -116,17 +115,17 @@
                 <img src="https://i.imgur.com/wEozr34.png" crossorigin="anonymous" style="height: 60px; width: auto;">
                 <div>
                     <h1 style="font-size: 22px; font-weight: 900; color: #064e3b; margin: 0; letter-spacing: -1px; text-transform: uppercase;">SPG OÁSIS</h1>
-                    <p style="font-size: 9px; font-weight: 800; color: #64748b; margin: 0; text-transform: uppercase; letter-spacing: 1px;">Relatório de Capina</p>
+                    <p style="font-size: 9px; font-weight: 800; color: #64748b; margin: 0; text-transform: uppercase; letter-spacing: 1px;">Acompanhamento de Capina</p>
                 </div>
             </div>
             <div style="text-align: right;">
                 <p id="capData" style="font-size: 13px; font-weight: 900; color: #1e293b; margin: 0;"></p>
-                <p style="font-size: 8px; font-weight: 700; color: #94a3b8; text-transform: uppercase; margin: 0;">Data de Execução</p>
+                <p style="font-size: 8px; font-weight: 700; color: #94a3b8; text-transform: uppercase; margin: 0;">Data</p>
             </div>
         </div>
         <div id="captureContent"></div>
         <div style="margin-top: 30px; padding-top: 15px; border-top: 1px dashed #e2e8f0; text-align: center;">
-            <p style="font-size: 8px; font-weight: 700; color: #cbd5e1; text-transform: uppercase; letter-spacing: 1px;">Documento gerado eletronicamente - SPG Oásis</p>
+            <p style="font-size: 8px; font-weight: 700; color: #cbd5e1; text-transform: uppercase; letter-spacing: 1px;">Documento SPG Oásis - Gestão de Manutenção</p>
         </div>
     </div>
 
@@ -136,7 +135,7 @@
                 <img src="https://i.imgur.com/wEozr34.png" alt="SPG Oásis" class="h-16 w-auto">
                 <div>
                     <h1 class="text-xl font-black uppercase tracking-tighter leading-tight">SPG Oásis</h1>
-                    <p class="text-emerald-200 font-bold text-[9px] uppercase tracking-widest">Registro Diário de Capina</p>
+                    <p class="text-emerald-200 font-bold text-[9px] uppercase tracking-widest">Capina e Manutenção</p>
                 </div>
             </div>
         </div>
@@ -149,7 +148,7 @@
                 <div id="formContainer" class="card-base p-8 sticky top-8 border-t-8 border-t-emerald-600 transition-all">
                     <div id="btnGroup" class="mb-8 space-y-3">
                         <button id="btnPrincipal" type="button" onclick="salvarBloco()" class="w-full bg-emerald-600 text-white font-black py-5 rounded-2xl shadow-xl shadow-emerald-100 uppercase tracking-widest text-[12px] hover:bg-emerald-700 transition-all active:scale-95 flex items-center justify-center gap-3">
-                            <i class="fas fa-plus-circle text-lg"></i> <span id="btnText">REGISTAR NOVO BLOCO</span>
+                            <i class="fas fa-plus-circle text-lg"></i> <span id="btnText">REGISTAR BLOCO</span>
                         </button>
                         <button id="btnCancelarEdicao" type="button" onclick="limparCampos()" class="hidden w-full bg-slate-200 text-slate-500 font-black py-3 rounded-2xl uppercase tracking-widest text-[10px] hover:bg-slate-300 transition-all">
                             CANCELAR EDIÇÃO
@@ -176,9 +175,10 @@
                             <div id="divOutroOperador" class="hidden-field">
                                 <input type="text" id="outroOperador" placeholder="Nome do Operador">
                             </div>
+
                             <div class="grid grid-cols-2 gap-4">
                                 <div>
-                                    <label class="block text-[10px] font-black text-slate-400 uppercase mb-1 ml-1">Local</label>
+                                    <label class="block text-[10px] font-black text-slate-400 uppercase mb-1 ml-1">Local (Bloco)</label>
                                     <select id="blocoSelect" onchange="checkOutroBloco(this.value)">
                                         <option value="BLOCO 01">Bloco 01</option>
                                         <option value="BLOCO 02">Bloco 02</option>
@@ -197,6 +197,7 @@
                                     </select>
                                 </div>
                             </div>
+
                             <div id="divOutroBloco" class="hidden-field">
                                 <input type="text" id="outroBlocoInput" placeholder="Especifique o Local...">
                             </div>
@@ -204,20 +205,25 @@
                                 <input type="text" id="outroEquip" placeholder="Qual Equipamento?">
                             </div>
 
-                            <div class="section-label">Horários</div>
+                            <div>
+                                <label class="block text-[10px] font-black text-slate-400 uppercase mb-1 ml-1">Canteiros / Detalhes da Área</label>
+                                <textarea id="canteiros" rows="2" placeholder="Ex: Canteiros 05 a 12, Perto da entrada..."></textarea>
+                            </div>
+
+                            <div class="section-label">Horários de Trabalho</div>
                             <div class="grid grid-cols-2 gap-4">
                                 <div>
                                     <p class="text-[9px] font-black text-slate-400 uppercase mb-2">Manhã</p>
                                     <div class="grid grid-cols-2 gap-1">
-                                        <input type="time" id="manhaInicio">
-                                        <input type="time" id="manhaFim">
+                                        <input type="time" id="manhaInicio" title="Início Manhã">
+                                        <input type="time" id="manhaFim" title="Fim Manhã">
                                     </div>
                                 </div>
                                 <div>
                                     <p class="text-[9px] font-black text-slate-400 uppercase mb-2">Tarde</p>
                                     <div class="grid grid-cols-2 gap-1">
-                                        <input type="time" id="tardeInicio">
-                                        <input type="time" id="tardeFim">
+                                        <input type="time" id="tardeInicio" title="Início Tarde">
+                                        <input type="time" id="tardeFim" title="Fim Tarde">
                                     </div>
                                 </div>
                             </div>
@@ -230,14 +236,14 @@
             <div class="lg:col-span-7">
                 <div class="flex justify-between items-center mb-8">
                     <div>
-                        <h2 class="text-2xl font-black text-slate-800 uppercase tracking-tighter">Registos do Dia</h2>
-                        <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Controle Local</p>
+                        <h2 class="text-2xl font-black text-slate-800 uppercase tracking-tighter">Histórico de Hoje</h2>
+                        <p class="text-[9px] font-bold text-slate-400 uppercase tracking-widest">Registos Temporários Locais</p>
                     </div>
                     <div class="flex gap-3">
-                        <button onclick="prepararDownload()" class="bg-slate-800 text-white text-[10px] font-black px-5 py-3 rounded-xl uppercase tracking-widest flex items-center gap-2 hover:bg-slate-700 transition-all">
-                            <i class="fas fa-download"></i> JPEG
+                        <button onclick="prepararGeracaoRelatorio()" class="bg-slate-800 text-white text-[10px] font-black px-6 py-3 rounded-xl uppercase tracking-widest flex items-center gap-2 hover:bg-slate-700 transition-all shadow-lg shadow-slate-100">
+                            <i class="fas fa-file-image"></i> BAIXAR RELATÓRIO (JPEG)
                         </button>
-                        <button onclick="abrirConfirmModal()" class="bg-white text-slate-400 hover:text-red-500 hover:bg-red-50 transition-all w-11 h-11 rounded-xl flex items-center justify-center border border-slate-200 shadow-sm" title="Limpar Tudo">
+                        <button onclick="abrirConfirmModal()" class="bg-white text-slate-400 hover:text-red-500 hover:bg-red-50 transition-all w-11 h-11 rounded-xl flex items-center justify-center border border-slate-200 shadow-sm" title="Limpar Histórico">
                             <i class="fas fa-trash-alt"></i>
                         </button>
                     </div>
@@ -249,7 +255,7 @@
 
     <script>
         const scriptURL = 'https://script.google.com/macros/s/AKfycbw_sE51ELNCNXH6s_ey3FcD79kqKBaocqVwUZtBjujuBhn6DT0x5h53Krhbs8WCKwZ5hg/exec';
-        let registros = JSON.parse(localStorage.getItem('oasis_v16')) || [];
+        let registros = JSON.parse(localStorage.getItem('oasis_v18')) || [];
         let editIndex = -1;
         
         function checkOutroBloco(val) { document.getElementById('divOutroBloco').style.display = (val === 'OUTROS') ? 'block' : 'none'; }
@@ -269,7 +275,6 @@
             return d > 0 ? d : 0;
         }
 
-        // Funções do Modal de Confirmação
         function abrirConfirmModal() {
             if(registros.length === 0) return;
             document.getElementById('confirmModal').style.display = 'flex';
@@ -281,7 +286,7 @@
 
         function confirmarLimpezaTotal() {
             registros = [];
-            localStorage.setItem('oasis_v16', JSON.stringify(registros));
+            localStorage.setItem('oasis_v18', JSON.stringify(registros));
             renderList();
             limparCampos();
             fecharConfirmModal();
@@ -295,11 +300,12 @@
             const mF = document.getElementById('manhaFim').value;
             const tI = document.getElementById('tardeInicio').value;
             const tF = document.getElementById('tardeFim').value;
+            const cant = document.getElementById('canteiros').value || 'Área não detalhada';
             
             const minM = calcularMinutos(mI, mF);
             const minT = calcularMinutos(tI, tF);
             
-            if(minM + minT === 0) { alert("Preencha os horários."); return; }
+            if(minM + minT === 0) { alert("Preencha os horários corretamente."); return; }
 
             let op = document.getElementById('operador').value;
             let opOriginal = op;
@@ -318,6 +324,7 @@
                 "Operador": op,
                 "Bloco / Local": bl,
                 "Equipamento": eq,
+                "Canteiros": cant,
                 "Turno Manhã": minM > 0 ? `${mI} - ${mF}` : 'N/A',
                 "Turno Tarde": minT > 0 ? `${tI} - ${tF}` : 'N/A',
                 mI, mF, tI, tF,
@@ -328,20 +335,26 @@
             document.getElementById('loadingOverlay').style.display = 'flex';
 
             try {
+                // Envio para a planilha
+                await fetch(scriptURL, { method: 'POST', body: JSON.stringify(payload), mode: 'no-cors' });
+                
                 if(editIndex === -1) {
-                    await fetch(scriptURL, { method: 'POST', body: JSON.stringify(payload), mode: 'no-cors' });
                     registros.push(payload);
                 } else {
                     registros[editIndex] = payload;
                 }
                 
-                localStorage.setItem('oasis_v16', JSON.stringify(registros));
+                localStorage.setItem('oasis_v18', JSON.stringify(registros));
                 limparCampos();
                 renderList();
                 document.getElementById('loadingOverlay').style.display = 'none';
             } catch (e) {
                 document.getElementById('loadingOverlay').style.display = 'none';
-                alert("Erro ao enviar.");
+                alert("Erro de rede. Salvo apenas no telemóvel por agora.");
+                if(editIndex === -1) registros.push(payload);
+                else registros[editIndex] = payload;
+                localStorage.setItem('oasis_v18', JSON.stringify(registros));
+                renderList();
             }
         }
 
@@ -358,11 +371,13 @@
             document.getElementById('equip').value = r.eqOriginal || 'Enxada';
             toggleOutroEquip(r.eqOriginal);
             if(r.eqOriginal === 'OUTRO') document.getElementById('outroEquip').value = r.Equipamento;
+            document.getElementById('canteiros').value = r.Canteiros || "";
             document.getElementById('manhaInicio').value = r.mI || "";
             document.getElementById('manhaFim').value = r.mF || "";
             document.getElementById('tardeInicio').value = r.tI || "";
             document.getElementById('tardeFim').value = r.tF || "";
-            document.getElementById('btnText').innerText = "ATUALIZAR BLOCO";
+            
+            document.getElementById('btnText').innerText = "ATUALIZAR REGISTO";
             document.getElementById('btnPrincipal').classList.replace('bg-emerald-600', 'bg-blue-600');
             document.getElementById('formContainer').classList.add('edit-mode');
             document.getElementById('formContainer').classList.replace('border-t-emerald-600', 'border-t-blue-600');
@@ -377,7 +392,7 @@
             document.getElementById('divOutroBloco').style.display = 'none';
             document.getElementById('divOutroEquip').style.display = 'none';
             document.getElementById('divOutroOperador').style.display = 'none';
-            document.getElementById('btnText').innerText = "REGISTAR NOVO BLOCO";
+            document.getElementById('btnText').innerText = "REGISTAR BLOCO";
             document.getElementById('btnPrincipal').classList.replace('bg-blue-600', 'bg-emerald-600');
             document.getElementById('formContainer').classList.remove('edit-mode');
             document.getElementById('formContainer').classList.replace('border-t-blue-600', 'border-t-emerald-600');
@@ -387,14 +402,14 @@
         function renderList() {
             const list = document.getElementById('listaRegistros');
             if(registros.length === 0) { 
-                list.innerHTML = `<div class="py-20 text-center text-slate-300 font-bold uppercase text-[10px]">Sem registos locais</div>`; 
+                list.innerHTML = `<div class="py-20 text-center text-slate-300 font-bold uppercase text-[10px] tracking-widest">Nenhum registo local para hoje</div>`; 
                 return; 
             }
             list.innerHTML = registros.map((r, i) => `
                 <div class="record-card shadow-sm border-l-4 border-emerald-500">
                     <div class="flex justify-between items-start mb-3">
                         <div class="flex items-center gap-3">
-                            <img src="https://i.imgur.com/wEozr34.png" class="h-10 w-auto">
+                            <img src="https://i.imgur.com/wEozr34.png" class="h-10 w-auto opacity-80">
                             <div>
                                 <h3 class="text-lg font-black text-slate-800 uppercase leading-none">${r["Bloco / Local"]}</h3>
                                 <p class="text-[9px] font-bold text-slate-400 uppercase mt-1">${r.Operador} • ${r.Equipamento}</p>
@@ -404,86 +419,141 @@
                             <button onclick="editarRegistro(${i})" class="text-blue-400 hover:text-blue-600 p-2 transition-all">
                                 <i class="fas fa-edit"></i>
                             </button>
-                            <p class="text-xl font-black text-emerald-600">${formatarTempo(r.totalMin)}h</p>
+                            <div class="text-right">
+                                <p class="text-xl font-black text-emerald-600 leading-none">${formatarTempo(r.totalMin)}h</p>
+                                <p class="text-[7px] font-black text-slate-300 uppercase mt-1">Duração</p>
+                            </div>
                         </div>
                     </div>
+                    
+                    <div class="mb-3 bg-emerald-50/50 p-3 rounded-2xl border border-emerald-100">
+                         <p class="text-[8px] font-black text-emerald-700 uppercase mb-1">Área / Canteiros:</p>
+                         <p class="text-[11px] font-semibold text-slate-700 leading-tight">${r.Canteiros}</p>
+                    </div>
+
                     <div class="grid grid-cols-2 gap-2 border-t border-slate-50 pt-3">
                         <div class="bg-slate-50 p-2 rounded-lg text-center">
-                            <p class="text-[7px] font-black text-slate-400 uppercase mb-0.5">Manhã</p>
-                            <p class="text-[10px] font-bold text-slate-600">${r["Turno Manhã"]}</p>
+                            <p class="text-[7px] font-black text-slate-400 uppercase mb-1">Manhã</p>
+                            <p class="text-[11px] font-black text-slate-600">${r["Turno Manhã"]}</p>
                         </div>
                         <div class="bg-slate-50 p-2 rounded-lg text-center">
-                            <p class="text-[7px] font-black text-slate-400 uppercase mb-0.5">Tarde</p>
-                            <p class="text-[10px] font-bold text-slate-600">${r["Turno Tarde"]}</p>
+                            <p class="text-[7px] font-black text-slate-400 uppercase mb-1">Tarde</p>
+                            <p class="text-[11px] font-black text-slate-600">${r["Turno Tarde"]}</p>
                         </div>
                     </div>
                 </div>
             `).join('');
         }
 
-        async function prepararDownload() {
+        async function prepararGeracaoRelatorio() {
             if(registros.length === 0) return;
             document.getElementById('loadingOverlay').style.display = 'flex';
-            document.getElementById('capData').innerText = registros[0].Data;
+            
+            // Configura a área de captura
+            const dataRelatorio = registros[0].Data;
+            document.getElementById('capData').innerText = dataRelatorio;
             const area = document.getElementById('captureContent');
             area.innerHTML = '';
+            
             let grandTotal = 0;
             registros.forEach((r) => {
                 grandTotal += r.totalMin;
                 const blockDiv = document.createElement('div');
                 blockDiv.style.marginBottom = '15px';
-                blockDiv.style.padding = '15px';
-                blockDiv.style.backgroundColor = '#f8fafc';
-                blockDiv.style.borderRadius = '12px';
-                blockDiv.style.border = '1px solid #e2e8f0';
+                blockDiv.style.padding = '20px';
+                blockDiv.style.backgroundColor = '#ffffff';
+                blockDiv.style.borderRadius = '16px';
+                blockDiv.style.border = '1px solid #f1f5f9';
+                blockDiv.style.boxShadow = '0 2px 4px rgba(0,0,0,0.02)';
+                
                 blockDiv.innerHTML = `
-                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
                         <div>
-                            <h2 style="font-size: 16px; font-weight: 900; color: #1e293b; margin: 0; text-transform: uppercase;">${r["Bloco / Local"]}</h2>
-                            <p style="font-size: 10px; font-weight: 600; color: #64748b; margin: 2px 0 0 0;">${r.Operador} • ${r.Equipamento}</p>
+                            <h2 style="font-size: 18px; font-weight: 900; color: #0f172a; margin: 0; text-transform: uppercase;">${r["Bloco / Local"]}</h2>
+                            <p style="font-size: 10px; font-weight: 700; color: #64748b; margin: 4px 0 0 0; text-transform: uppercase;">${r.Operador} | ${r.Equipamento}</p>
                         </div>
-                        <p style="font-size: 16px; font-weight: 900; color: #059669; margin: 0;">${formatarTempo(r.totalMin)}h</p>
+                        <p style="font-size: 18px; font-weight: 900; color: #059669; margin: 0;">${formatarTempo(r.totalMin)}h</p>
                     </div>
-                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; border-top: 1px solid #f1f5f9; padding-top: 8px;">
-                        <p style="font-size: 11px; color: #334155; margin: 0;"><b>Manhã:</b> ${r["Turno Manhã"]}</p>
-                        <p style="font-size: 11px; color: #334155; margin: 0;"><b>Tarde:</b> ${r["Turno Tarde"]}</p>
+                    <div style="margin-bottom: 12px; padding: 10px; background: #f8fafc; border-radius: 10px; border-left: 4px solid #10b981;">
+                        <p style="font-size: 8px; font-weight: 900; color: #10b981; margin: 0 0 3px 0; text-transform: uppercase;">Canteiros/Detalhes:</p>
+                        <p style="font-size: 11px; margin: 0; color: #334155; font-weight: 500;">${r.Canteiros}</p>
+                    </div>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; border-top: 1px solid #f8fafc; padding-top: 10px;">
+                        <div>
+                            <p style="font-size: 8px; color: #94a3b8; margin: 0; text-transform: uppercase; font-weight: 800;">Manhã</p>
+                            <p style="font-size: 12px; color: #1e293b; margin: 2px 0 0 0; font-weight: 700;">${r["Turno Manhã"]}</p>
+                        </div>
+                        <div>
+                            <p style="font-size: 8px; color: #94a3b8; margin: 0; text-transform: uppercase; font-weight: 800;">Tarde</p>
+                            <p style="font-size: 12px; color: #1e293b; margin: 2px 0 0 0; font-weight: 700;">${r["Turno Tarde"]}</p>
+                        </div>
                     </div>
                 `;
                 area.appendChild(blockDiv);
             });
+
             const totalDiv = document.createElement('div');
             totalDiv.style.backgroundColor = '#065f46';
             totalDiv.style.color = '#ffffff';
-            totalDiv.style.padding = '15px';
-            totalDiv.style.borderRadius = '12px';
+            totalDiv.style.padding = '20px';
+            totalDiv.style.borderRadius = '16px';
             totalDiv.style.textAlign = 'center';
             totalDiv.style.marginTop = '10px';
-            totalDiv.innerHTML = `<p style="font-size: 28px; font-weight: 900; margin: 0;">TOTAL: ${formatarTempo(grandTotal)}h</p>`;
+            totalDiv.innerHTML = `
+                <p style="font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; opacity: 0.8; margin-bottom: 5px;">Total Acumulado</p>
+                <p style="font-size: 32px; font-weight: 900; margin: 0;">${formatarTempo(grandTotal)}h</p>
+            `;
             area.appendChild(totalDiv);
+
             try {
-                const canvas = await html2canvas(document.getElementById('captureArea'), { scale: 2, useCORS: true });
-                document.getElementById('imgPreview').src = canvas.toDataURL('image/jpeg', 0.9);
+                // Gera o Canvas
+                const canvas = await html2canvas(document.getElementById('captureArea'), { 
+                    scale: 2, 
+                    useCORS: true,
+                    backgroundColor: '#ffffff'
+                });
+                
+                const imageData = canvas.toDataURL('image/jpeg', 0.9);
+                document.getElementById('imgPreview').src = imageData;
+                
+                // DISPARA O DOWNLOAD AUTOMÁTICO
+                const link = document.createElement('a');
+                const fileName = `RELATORIO_CAPINA_${dataRelatorio.replace(/\//g, '-')}.jpg`;
+                link.download = fileName;
+                link.href = imageData;
+                link.click();
+                
                 document.getElementById('loadingOverlay').style.display = 'none';
                 document.getElementById('whatsappModal').style.display = 'flex';
             } catch (err) {
+                console.error(err);
                 document.getElementById('loadingOverlay').style.display = 'none';
-                alert("Erro ao capturar.");
+                alert("Erro ao gerar imagem. Tente novamente.");
             }
         }
 
         function enviarWhatsApp() {
-            let msg = `*RELATÓRIO SPG OÁSIS*\n📅 *DATA:* ${registros[0].Data}\n\n`;
+            if(registros.length === 0) return;
+            const dataRel = registros[0].Data;
+            let msg = `*SPG OÁSIS - RELATÓRIO DE CAPINA*\n📅 *DATA:* ${dataRel}\n\n`;
             let total = 0;
+            
             registros.forEach(r => {
-                msg += `📍 *${r["Bloco / Local"]}*: ${formatarTempo(r.totalMin)}h\n`;
+                msg += `📍 *LOCAL:* ${r["Bloco / Local"]}\n`;
+                msg += `🌱 *CANTEIROS:* ${r.Canteiros}\n`;
+                msg += `⏱️ *DURAÇÃO:* ${formatarTempo(r.totalMin)}h\n`;
+                msg += `───────────────────\n`;
                 total += r.totalMin;
             });
-            msg += `\n⏱️ *TOTAL:* ${formatarTempo(total)}h`;
+            
+            msg += `✅ *TOTAL DO DIA:* ${formatarTempo(total)}h\n`;
+            msg += `_O relatório em imagem já foi salvo no seu dispositivo._`;
+            
             window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
-            fecharModalWhatsapp();
         }
 
         function fecharModalWhatsapp() { document.getElementById('whatsappModal').style.display = 'none'; }
+        
         window.onload = () => { 
             document.getElementById('data').value = new Date().toISOString().split('T')[0];
             renderList(); 
